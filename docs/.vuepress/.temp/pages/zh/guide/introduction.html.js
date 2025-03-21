@@ -1,5 +1,5 @@
-import comp from "D:/code/Zhaha/blog/docs/.vuepress/.temp/pages/404.html.vue"
-const data = JSON.parse("{\"path\":\"/404.html\",\"title\":\"\",\"lang\":\"zh-CN\",\"frontmatter\":{\"layout\":\"NotFound\"},\"headers\":[],\"git\":{},\"filePathRelative\":null}")
+import comp from "D:/code/Zhaha/blog/docs/.vuepress/.temp/pages/zh/guide/introduction.html.vue"
+const data = JSON.parse("{\"path\":\"/zh/guide/introduction.html\",\"title\":\"\",\"lang\":\"zh-CN\",\"frontmatter\":{},\"headers\":[],\"git\":{},\"filePathRelative\":\"zh/guide/introduction.md\"}")
 export { comp, data }
 
 if (import.meta.webpackHot) {

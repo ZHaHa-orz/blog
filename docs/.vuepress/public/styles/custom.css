@@ -1,0 +1,32 @@
+/* 首页特殊样式 */
+.home-page {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+    
+    .hero {
+      text-align: center;
+      padding: 4rem 0;
+      
+      img {
+        border-radius: 50%;
+        max-width: 200px;
+      }
+    }
+    
+    .features {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2rem;
+    }
+  }
+  
+  /* 导航栏动画 */
+  .navbar .nav-link {
+    transition: all 0.3s ease;
+    
+    &:hover {
+      transform: translateY(-2px);
+      color: var(--c-brand);
+    }
+  }
