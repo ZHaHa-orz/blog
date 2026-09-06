@@ -47,7 +47,7 @@ export default defineUserConfig({
 
         // 顶部导航栏配置
         navbar: [
-            { text: '🏠 主页', link: 'https://zhaha-orz.github.io/' },
+            { text: '🏠 主页', link: '/' },
             { text: '📝 博客', link: '/' },
             {
                 text: '📚 导航',
