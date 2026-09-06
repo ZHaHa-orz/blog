@@ -35,15 +35,30 @@ jobs:
       - name: 构建 VuePress 站点
         run: pnpm docs:build
 
-      # 查看 workflow 的文档来获取更多信息
-      # @see https://github.com/crazy-max/ghaction-github-pages
+      # 部署到 GitHub Pages（gh-pages 分支）
       - name: 部署到 GitHub Pages
         uses: crazy-max/ghaction-github-pages@v4
         with:
-          # 部署到 blog_pages 分支
-          target_branch: blog_pages
+          # 部署到 gh-pages 分支（替代旧的 blog_pages 分支）
+          target_branch: gh-pages
           # 部署目录为 VuePress 的默认输出目录
           build_dir: docs/.vuepress/dist
         env:
-          # @see https://docs.github.com/cn/actions/reference/authentication-in-a-workflow#about-the-github_token-secret
           GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+
+      # 将博客仓库的 Pages 源切换到 gh-pages 分支
+      - name: 更新 Pages 源为 gh-pages 分支
+        run: |
+          curl -sS -X PUT \
+            -H "Authorization: token ${{ secrets.ACCESS_TOKEN }}" \
+            -H "Accept: application/vnd.github+json" \
+            https://api.github.com/repos/${{ github.repository }}/pages \
+            -d '{"source":{"branch":"gh-pages","path":"/"}}'
+
+      # 删除旧的 blog_pages 分支
+      - name: 删除旧的 blog_pages 分支
+        run: |
+          curl -sS -X DELETE \
+            -H "Authorization: token ${{ secrets.ACCESS_TOKEN }}" \
+            https://api.github.com/repos/${{ github.repository }}/git/refs/heads/blog_pages \
+            || echo "blog_pages 分支不存在或已删除，跳过"

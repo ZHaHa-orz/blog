@@ -20,12 +20,12 @@ export default defineUserConfig({
         '/': {
             lang: 'zh-CN',
             title: '庄哈哈',
-            description: 'Vue 驱动的静态网站生成器',
+            description: '前端开发的学习笔记与个人博客',
         },
         '/en/': {
             lang: 'en-US',
             title: 'Zhaha',
-            description: 'Vue-powered Static Site Generator',
+            description: 'Frontend notes and personal blog',
         },
     },
 
@@ -47,7 +47,8 @@ export default defineUserConfig({
 
         // 顶部导航栏配置
         navbar: [
-            { text: '🏠 首页', link: '/' },
+            { text: '🏠 主页', link: 'https://zhaha-orz.github.io/' },
+            { text: '📝 博客', link: '/' },
             {
                 text: '📚 导航',
                 link: '/guide/',
@@ -58,35 +59,10 @@ export default defineUserConfig({
                 link: '/frontend/',
                 activeMatch: '^/frontend/',
             },
-            {
-                text: '🔧 项目',
-                children: [
-                    { text: 'Project 1', link: '/projects/project1' },
-                    { text: 'Project 2', link: '/projects/project2' },
-                ],
-            },
-            { text: '📝 关于我', link: 'https://zhaha-orz.github.io/' },
         ],
 
-        // 侧边栏配置
-        sidebar: {
-            '/guides/': [
-                {
-                    text: 'Getting Started',
-                    collapsible: true,
-                    children: [
-                        '/guides/'
-                    ],
-                },
-                {
-                    text: 'Advanced',
-                    collapsible: true,
-                    children: [
-                        '/guides/',
-                    ],
-                }
-            ],
-        },
+        // 侧边栏配置（自动生成）
+        sidebar: 'auto',
     }),
 
 })

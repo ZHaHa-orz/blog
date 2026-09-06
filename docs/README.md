@@ -2,18 +2,17 @@
 home: true
 
 title: 主页
-titleTemplate: zhaha's blog
+titleTemplate: 庄哈哈的博客
 
 heroImage: /images/波吉01.jpg
-heroText: 随笔
-tagline: 一个博客
-actionText: 快速开始 →
-actionLink: /en/guide/
+heroText: 庄哈哈
+tagline: 前端开发 · 记录与分享
+actionText: 开始阅读 →
+actionLink: /guide/
 features:
-  - title: hi
-    details: 你好
-  - title: hello
-    details: 大家好
-footer: MIT Licensed | Copyright © 2020-present 随笔
+  - title: 前端技术
+    details: Vue、JavaScript、TypeScript 等前端技术的学习笔记与实践总结
+  - title: 项目记录
+    details: 个人项目的开发过程、踩坑经验与技术选型思考
+footer: MIT Licensed | Copyright © 2020-present 庄哈哈
 ---
-
