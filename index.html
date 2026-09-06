@@ -17,10 +17,24 @@
   <!-- ============ 顶部导航栏 ============ -->
   <header class="navbar" id="navbar">
     <div class="nav-inner">
-      <a class="brand" href="#" data-action="home">
-        <span class="brand-mark">庄</span>
+      <!-- 左上角：头像 + 名称，点击跳转到个人主页 -->
+      <a class="brand" href="https://zhaha-orz.github.io/" target="_blank" rel="noopener noreferrer">
+        <img class="brand-avatar" src="assets/avatar.jpg" alt="庄哈哈" />
         <span class="brand-name" data-i18n="brand">庄哈哈</span>
       </a>
+
+      <!-- 中间：音乐播放器 -->
+      <div class="music-player" id="musicPlayer">
+        <button class="music-play-btn" id="musicPlayBtn" aria-label="播放/暂停">
+          <span class="play-icon">▶</span>
+          <span class="pause-icon">⏸</span>
+        </button>
+        <div class="music-info">
+          <span class="music-title">森の小さなレストラン</span>
+          <span class="music-artist">手嶌葵</span>
+        </div>
+        <audio id="bgAudio" src="assets/森の小さなレストラン.mp3" loop preload="none"></audio>
+      </div>
 
       <nav class="nav-menu" id="navMenu">
         <a href="#" class="nav-link" data-i18n="nav.home" data-action="home">首页</a>
@@ -46,9 +60,26 @@
 
   <!-- ============ 主内容区 ============ -->
   <main class="container" id="main">
-    <!-- 文章列表视图 -->
+    <!-- 首页视图：Hero + 文章列表 -->
     <section class="view view-list" id="listView">
-      <div class="layout">
+      <!-- Hero 区 -->
+      <section class="hero" id="hero">
+        <img class="hero-avatar" src="assets/avatar.jpg" alt="庄哈哈" />
+        <h1 class="hero-greeting" data-i18n="hero.greeting">Hi, I am 庄哈哈 (Zhaha) 👋</h1>
+        <p class="hero-intro" data-i18n="hero.intro">自律上瘾中 | 终身学习者 | 审美在线</p>
+        <div class="hero-actions">
+          <button class="btn btn-primary hero-btn" data-action="articles">
+            <span data-i18n="hero.postsBtn">博客文章</span>
+          </button>
+          <a class="btn btn-ghost hero-btn" href="https://zhaha-orz.github.io/" target="_blank" rel="noopener noreferrer">
+            <span data-i18n="hero.githubBtn">GitHub</span>
+            <span aria-hidden="true">↗</span>
+          </a>
+        </div>
+      </section>
+
+      <!-- 文章 + 侧栏 -->
+      <div class="layout" id="postsSection">
         <!-- 左侧主栏 70% -->
         <div class="main-col">
           <header class="page-head">
@@ -57,7 +88,6 @@
           </header>
 
           <div class="post-list" id="postList">
-            <!-- 文章卡片由 JS 动态渲染 -->
             <div class="loading" data-i18n="status.loading">加载中…</div>
           </div>
         </div>
@@ -92,46 +122,84 @@
         <span aria-hidden="true">←</span>
         <span data-i18n="article.back">返回列表</span>
       </button>
-      <article class="article-wrap" id="articleWrap">
-        <!-- 文章内容由 JS 渲染 -->
-      </article>
+      <article class="article-wrap" id="articleWrap"></article>
     </section>
 
     <!-- 关于视图 -->
     <section class="view view-about" id="aboutView" hidden>
       <div class="about-wrap card">
-        <h1 class="page-title" data-i18n="about.title">关于我</h1>
-        <div class="about-content" data-i18n="about.body">
+        <div class="about-head">
+          <img class="about-avatar" src="assets/avatar.jpg" alt="庄哈哈" />
+          <div>
+            <h1 class="page-title" data-i18n="about.title">关于我</h1>
+            <p class="about-name">庄哈哈 · Zhaha</p>
+          </div>
+        </div>
+        <p class="about-content" data-i18n="about.body">
           你好，我是庄哈哈。这里是我的个人小空间，写一些技术笔记，也记一些生活的碎片。
+        </p>
+
+        <div class="info-grid">
+          <div class="info-item">
+            <span class="info-label" data-i18n="about.mbti">MBTI</span>
+            <span class="info-value">ISFJ</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label" data-i18n="about.zodiac">星座</span>
+            <span class="info-value">♌ 狮子座 / Leo</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label" data-i18n="about.birth">出生</span>
+            <span class="info-value">1998</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label" data-i18n="about.location">坐标</span>
+            <span class="info-value">广东 · 汕头</span>
+          </div>
+        </div>
+
+        <div class="about-tags-block">
+          <h3 class="about-tags-title" data-i18n="about.tags">身份标签</h3>
+          <div class="tags-cloud">
+            <span class="tag">🎧 耳机常驻人口</span>
+            <span class="tag">🎮 游戏资深爱好者</span>
+            <span class="tag">💪 健身气氛组组长</span>
+            <span class="tag">📚 床头书山管理员</span>
+            <span class="tag">🍜 中国美食集邮中</span>
+            <span class="tag">🚶 城市漫游者</span>
+            <span class="tag">📖 终身学习者</span>
+            <span class="tag">🔍 像素级强迫症</span>
+          </div>
         </div>
       </div>
     </section>
-  </main>
 
-  <!-- ============ 联系方式弹窗 ============ -->
-  <div class="modal-overlay" id="contactModal" hidden>
-    <div class="modal card" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
-      <button class="modal-close" id="modalClose" aria-label="关闭">✕</button>
-      <h2 class="modal-title" id="modalTitle">
-        <span>📬</span>
-        <span data-i18n="modal.title">联系我</span>
-      </h2>
-      <ul class="contact-list">
-        <li class="contact-item">
-          <span class="contact-label">WeChat</span>
-          <span class="contact-value">zhh16695</span>
-        </li>
-        <li class="contact-item">
-          <span class="contact-label" data-i18n="modal.phone">电话</span>
-          <span class="contact-value">19300442279</span>
-        </li>
-        <li class="contact-item">
-          <span class="contact-label" data-i18n="modal.email">邮箱</span>
-          <span class="contact-value">zkt1669519973@163.com</span>
-        </li>
-      </ul>
-    </div>
-  </div>
+    <!-- 联系视图 -->
+    <section class="view view-contact" id="contactView" hidden>
+      <div class="contact-wrap card">
+        <img class="contact-avatar" src="assets/avatar.jpg" alt="庄哈哈" />
+        <h1 class="page-title contact-title" data-i18n="contact.title">联系我</h1>
+        <p class="contact-subtitle" data-i18n="contact.subtitle">想聊点什么？通过下面任一方式找到我。</p>
+        <ul class="contact-list">
+          <li class="contact-item">
+            <span class="contact-icon">💬</span>
+            <span class="contact-label" data-i18n="contact.wechat">微信</span>
+            <span class="contact-value">zhh16695</span>
+          </li>
+          <li class="contact-item">
+            <span class="contact-icon">📱</span>
+            <span class="contact-label" data-i18n="contact.phone">电话</span>
+            <span class="contact-value">19300442279</span>
+          </li>
+          <li class="contact-item">
+            <span class="contact-icon">✉️</span>
+            <span class="contact-label" data-i18n="contact.email">邮箱</span>
+            <span class="contact-value">zkt1669519973@163.com</span>
+          </li>
+        </ul>
+      </div>
+    </section>
+  </main>
 
   <!-- ============ 页脚 ============ -->
   <footer class="footer">

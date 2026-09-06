@@ -2,8 +2,8 @@
  * main.js — 主逻辑入口
  * - 文章列表渲染
  * - Markdown 懒加载（点击标题后再 fetch）
- * - 视图切换（列表 / 文章 / 关于）
- * - 联系弹窗
+ * - 视图切换（列表 / 文章 / 关于 / 联系）
+ * - 音乐播放器（点击播放，默认暂停）
  * - 移动端汉堡菜单
  * - 主题 & 语言按钮绑定
  * ============================================================ */
@@ -161,7 +161,12 @@
 
   /* ---------- 视图切换 ---------- */
   function showView(name) {
-    const views = { list: "listView", article: "articleView", about: "aboutView" };
+    const views = {
+      list: "listView",
+      article: "articleView",
+      about: "aboutView",
+      contact: "contactView"
+    };
     Object.entries(views).forEach(([k, id]) => {
       const el = $(id);
       if (k === name) el.hidden = false;
@@ -171,19 +176,30 @@
     closeMobileMenu();
   }
 
-  /* ---------- 联系弹窗 ---------- */
-  function openModal() {
-    const m = $("contactModal");
-    m.hidden = false;
-    document.body.style.overflow = "hidden";
-    // 焦点管理
-    setTimeout(() => $("modalClose").focus(), 50);
-  }
+  /* ---------- 音乐播放器 ---------- */
+  function initMusicPlayer() {
+    const audio = $("bgAudio");
+    const btn = $("musicPlayBtn");
+    if (!audio || !btn) return;
 
-  function closeModal() {
-    const m = $("contactModal");
-    m.hidden = true;
-    document.body.style.overflow = "";
+    audio.volume = 0.7;
+
+    btn.addEventListener("click", async () => {
+      try {
+        if (audio.paused) {
+          await audio.play();
+          btn.classList.add("playing");
+        } else {
+          audio.pause();
+          btn.classList.remove("playing");
+        }
+      } catch (err) {
+        console.error("[music] play failed:", err);
+      }
+    });
+
+    // 播放结束（loop 时一般不会触发，但保险起见）
+    audio.addEventListener("ended", () => btn.classList.remove("playing"));
   }
 
   /* ---------- 移动端菜单 ---------- */
@@ -249,28 +265,36 @@
         const act = el.dataset.action;
         switch (act) {
           case "home":
-          case "articles":
             showView("list");
             window.scrollTo({ top: 0, behavior: "smooth" });
+            break;
+          case "articles":
+            // 若已在首页，平滑滚动到文章区；否则先切回首页再滚动
+            showView("list");
+            setTimeout(() => {
+              const posts = $("postsSection");
+              if (posts) {
+                const top = posts.getBoundingClientRect().top + window.scrollY - 80;
+                window.scrollTo({ top, behavior: "smooth" });
+              }
+            }, 60);
             break;
           case "about":
             showView("about");
             window.scrollTo({ top: 0, behavior: "smooth" });
             break;
           case "contact":
-            openModal();
+            showView("contact");
+            window.scrollTo({ top: 0, behavior: "smooth" });
             break;
         }
       });
     });
 
-    // 联系按钮
-    $("contactBtn").addEventListener("click", openModal);
-
-    // 弹窗关闭
-    $("modalClose").addEventListener("click", closeModal);
-    $("contactModal").addEventListener("click", (e) => {
-      if (e.target === $("contactModal")) closeModal();
+    // 侧栏联系按钮 → 联系页
+    $("contactBtn").addEventListener("click", () => {
+      showView("contact");
+      window.scrollTo({ top: 0, behavior: "smooth" });
     });
 
     // 返回列表
@@ -279,23 +303,15 @@
       window.scrollTo({ top: 0, behavior: "smooth" });
     });
 
-    // ESC 关闭弹窗
+    // ESC 关闭移动菜单
     document.addEventListener("keydown", (e) => {
-      if (e.key === "Escape") {
-        if (!$("contactModal").hidden) closeModal();
-        closeMobileMenu();
-      }
+      if (e.key === "Escape") closeMobileMenu();
     });
 
     // 语言切换后重渲染动态内容
     document.addEventListener("langchange", () => {
       renderPostList(articles);
       renderTweets(tweets);
-      // 若在文章视图，刷新当前文章标题/日期
-      const activeArticle = $("articleWrap").querySelector(".article-title");
-      if (activeArticle && activeArticle.dataset.file) {
-        // 简单处理：重渲染列表标题/日期
-      }
     });
   }
 
@@ -307,6 +323,8 @@
     applyLang(currentLang);
     // 绑定事件
     bindEvents();
+    // 初始化音乐播放器（默认暂停）
+    initMusicPlayer();
     // 加载数据
     loadArticles();
     loadTweets();

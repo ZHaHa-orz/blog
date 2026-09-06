@@ -13,6 +13,11 @@ const I18N = {
 
     "lang.label":       "中",
 
+    "hero.greeting":    "Hi, I am 庄哈哈 (Zhaha) 👋",
+    "hero.intro":       "自律上瘾中 | 终身学习者 | 审美在线",
+    "hero.postsBtn":    "博客文章",
+    "hero.githubBtn":   "GitHub",
+
     "home.title":       "最近文章",
     "home.subtitle":    "记录生活、技术与一些碎碎念",
 
@@ -27,10 +32,17 @@ const I18N = {
 
     "about.title":      "关于我",
     "about.body":       "你好，我是庄哈哈。这里是我的个人小空间，写一些技术笔记，也记一些生活的碎片。喜欢在文字与代码之间来回踱步，相信温暖的好奇心是最好的引擎。",
+    "about.mbti":       "MBTI",
+    "about.zodiac":     "星座",
+    "about.birth":      "出生",
+    "about.location":   "坐标",
+    "about.tags":       "身份标签",
 
-    "modal.title":      "联系我",
-    "modal.phone":      "电话",
-    "modal.email":      "邮箱",
+    "contact.title":    "联系我",
+    "contact.subtitle": "想聊点什么？通过下面任一方式找到我。",
+    "contact.wechat":   "微信",
+    "contact.phone":    "电话",
+    "contact.email":    "邮箱",
 
     "footer.copy":      "© 2026 庄哈哈. 由温暖与好奇心驱动.",
 
@@ -47,6 +59,11 @@ const I18N = {
 
     "lang.label":       "EN",
 
+    "hero.greeting":    "Hi, I am 庄哈哈 (Zhaha) 👋",
+    "hero.intro":       "Self-discipline Addict | Lifelong Learner | Aesthetic On Point",
+    "hero.postsBtn":    "Posts",
+    "hero.githubBtn":   "GitHub",
+
     "home.title":       "Recent Posts",
     "home.subtitle":    "Notes on life, code, and little thoughts",
 
@@ -61,10 +78,17 @@ const I18N = {
 
     "about.title":      "About Me",
     "about.body":       "Hi, I'm Zhaha. This is my little space for tech notes and slices of life. I like to pace between words and code, and I believe warm curiosity is the best engine.",
+    "about.mbti":       "MBTI",
+    "about.zodiac":     "Zodiac",
+    "about.birth":      "Born",
+    "about.location":   "Location",
+    "about.tags":       "Identity Tags",
 
-    "modal.title":      "Contact Me",
-    "modal.phone":      "Phone",
-    "modal.email":      "Email",
+    "contact.title":    "Contact Me",
+    "contact.subtitle": "Want to chat? Reach out via any of the ways below.",
+    "contact.wechat":   "WeChat",
+    "contact.phone":    "Phone",
+    "contact.email":    "Email",
 
     "footer.copy":      "© 2026 Zhaha. Powered by warmth & curiosity.",
 
