@@ -10,6 +10,9 @@ on:
 jobs:
   docs:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pages: write
 
     steps:
       - uses: actions/checkout@v4
@@ -44,13 +47,13 @@ jobs:
           # 部署目录为 VuePress 的默认输出目录
           build_dir: docs/.vuepress/dist
         env:
-          GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       # 将博客仓库的 Pages 源切换到 gh-pages 分支
       - name: 更新 Pages 源为 gh-pages 分支
         run: |
           curl -sS -X PUT \
-            -H "Authorization: token ${{ secrets.ACCESS_TOKEN }}" \
+            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
             -H "Accept: application/vnd.github+json" \
             https://api.github.com/repos/${{ github.repository }}/pages \
             -d '{"source":{"branch":"gh-pages","path":"/"}}'
@@ -59,6 +62,6 @@ jobs:
       - name: 删除旧的 blog_pages 分支
         run: |
           curl -sS -X DELETE \
-            -H "Authorization: token ${{ secrets.ACCESS_TOKEN }}" \
+            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
             https://api.github.com/repos/${{ github.repository }}/git/refs/heads/blog_pages \
             || echo "blog_pages 分支不存在或已删除，跳过"
