@@ -26,6 +26,10 @@ const I18N = {
     "articles.title":   "全部文章",
     "articles.subtitle":"按分类浏览所有文章",
     "articles.all":     "全部",
+    "articles.tagsTitle":"标签分类",
+
+    "breadcrumb.home":     "首页",
+    "breadcrumb.articles":  "文章",
 
     "sidebar.tweets":     "最近碎碎念",
     "sidebar.contact":    "联系我",
@@ -78,6 +82,10 @@ const I18N = {
     "articles.title":   "All Posts",
     "articles.subtitle":"Browse all posts by category",
     "articles.all":     "All",
+    "articles.tagsTitle":"Tags",
+
+    "breadcrumb.home":     "Home",
+    "breadcrumb.articles":  "Articles",
 
     "sidebar.tweets":     "Recent Tweets",
     "sidebar.contact":    "Contact Me",

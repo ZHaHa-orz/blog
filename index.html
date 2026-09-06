@@ -11,7 +11,7 @@
   <!-- highlight.js for code blocks -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release/build/styles/atom-one-dark.min.css" />
   <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release/build/highlight.min.js"></script>
-  <link rel="stylesheet" href="css/style.css?v=2" />
+  <link rel="stylesheet" href="css/style.css?v=3" />
 </head>
 <body>
   <!-- ============ 顶部导航栏 ============ -->
@@ -149,29 +149,41 @@
       </div>
     </section>
 
-    <!-- 文章详情视图 -->
+    <!-- 文章详情视图（顶部面包屑可跳回上一层级） -->
     <section class="view view-article" id="articleView" hidden>
-      <button class="back-btn" id="backBtn">
-        <span aria-hidden="true">←</span>
-        <span data-i18n="article.back">返回列表</span>
-      </button>
+      <nav class="breadcrumb" id="breadcrumb">
+        <a href="#" class="crumb" data-i18n="breadcrumb.home" data-action="home">首页</a>
+        <span class="crumb-sep">/</span>
+        <a href="#" class="crumb" id="crumbBack" data-i18n="breadcrumb.articles">文章</a>
+        <span class="crumb-sep">/</span>
+        <span class="crumb-current" id="crumbCurrent">文章详情</span>
+      </nav>
       <article class="article-wrap" id="articleWrap"></article>
     </section>
 
-    <!-- 文章分类视图 -->
+    <!-- 文章分类视图：左标签栏 + 右文章列表 -->
     <section class="view view-articles" id="articlesView" hidden>
       <header class="page-head">
         <h1 class="page-title" data-i18n="articles.title">全部文章</h1>
         <p class="page-sub" data-i18n="articles.subtitle">按分类浏览所有文章</p>
       </header>
 
-      <div class="category-tabs" id="categoryTabs">
-        <button class="cat-tab active" data-cat="all" data-i18n="articles.all">全部</button>
-        <!-- 分类标签由 JS 动态渲染 -->
-      </div>
+      <div class="articles-layout">
+        <!-- 左侧：标签分类栏（占比较小） -->
+        <aside class="tag-sidebar">
+          <h2 class="sidebar-title" data-i18n="articles.tagsTitle">标签分类</h2>
+          <nav class="tag-nav" id="categoryTabs">
+            <button class="cat-tab active" data-cat="all" data-i18n="articles.all">全部</button>
+            <!-- 分类标签由 JS 动态渲染 -->
+          </nav>
+        </aside>
 
-      <div class="post-list" id="articlesList">
-        <div class="loading" data-i18n="status.loading">加载中…</div>
+        <!-- 右侧：该标签下的文章列表 -->
+        <div class="articles-main">
+          <div class="post-list" id="articlesList">
+            <div class="loading" data-i18n="status.loading">加载中…</div>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -259,8 +271,8 @@
   </footer>
 
   <!-- ============ 脚本（按依赖顺序加载） ============ -->
-  <script src="js/i18n.js?v=2"></script>
-  <script src="js/theme.js?v=2"></script>
-  <script src="js/main.js?v=2"></script>
+  <script src="js/i18n.js?v=3"></script>
+  <script src="js/theme.js?v=3"></script>
+  <script src="js/main.js?v=3"></script>
 </body>
 </html>

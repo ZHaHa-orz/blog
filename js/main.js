@@ -17,6 +17,7 @@
   let articles = [];
   let tweets = [];
   let currentCategory = "all";
+  let articleSourceView = "list"; // 进入文章详情前的来源视图：list(首页) | articles(分类页)
   const articleCache = new Map(); // file -> rendered html
 
   /**
@@ -207,6 +208,16 @@
   /* ---------- 加载：文章详情（懒加载） ---------- */
   async function openArticle(file) {
     const wrap = $("articleWrap");
+
+    // 记录来源视图（当前可见的列表类视图），用于面包屑返回
+    const listView = $("listView");
+    const articlesView = $("articlesView");
+    if (articlesView && !articlesView.hidden) {
+      articleSourceView = "articles";
+    } else if (listView && !listView.hidden) {
+      articleSourceView = "list";
+    }
+
     showView("article");
     wrap.innerHTML = `<div class="loading">${esc(t("article.loading"))}</div>`;
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -233,6 +244,10 @@
       const lang = getLang();
       const title = meta ? esc(meta.title[lang] || meta.title.zh) : "";
       const date = meta ? fmtDate(meta.date, lang) : "";
+
+      // 更新面包屑当前节点文字
+      const crumbCurrent = $("crumbCurrent");
+      if (crumbCurrent) crumbCurrent.textContent = meta ? (meta.title[lang] || meta.title.zh) : "";
 
       wrap.innerHTML = `
         <header class="article-head">
@@ -349,21 +364,33 @@
       durEl.textContent = fmtTime(audio.duration);
     });
 
-    // 时间更新 → 进度条
+    let seeking = false;
+
+    // 时间更新 → 进度条（拖动时不覆盖）
     audio.addEventListener("timeupdate", () => {
-      if (audio.duration) {
+      if (!seeking && audio.duration) {
         const pct = (audio.currentTime / audio.duration) * 1000;
         seek.value = String(pct);
       }
       curEl.textContent = fmtTime(audio.currentTime);
     });
 
-    // 拖动进度条 → seek
+    // 拖动进度条开始
+    seek.addEventListener("pointerdown", () => { seeking = true; });
     seek.addEventListener("input", () => {
+      if (audio.duration) {
+        audio.currentTime = (parseFloat(seek.value) / 1000) * audio.duration;
+        curEl.textContent = fmtTime(audio.currentTime);
+      }
+    });
+    // 拖动结束 → 跳到对应时间播放
+    seek.addEventListener("pointerup", () => {
+      seeking = false;
       if (audio.duration) {
         audio.currentTime = (parseFloat(seek.value) / 1000) * audio.duration;
       }
     });
+    seek.addEventListener("change", () => { seeking = false; });
 
     // 音量滑块
     volSlider.addEventListener("input", () => {
@@ -522,10 +549,17 @@
     });
 
     // 返回列表
-    $("backBtn").addEventListener("click", () => {
-      showView("list");
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    });
+    // 面包屑「文章」节点 → 返回上一层级（首页 / 分类页）
+    const crumbBack = $("crumbBack");
+    if (crumbBack) {
+      crumbBack.addEventListener("click", (e) => {
+        e.preventDefault();
+        // 根据来源返回到对应层级
+        const target = articleSourceView === "articles" ? "articles" : "list";
+        showView(target);
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      });
+    }
 
     // ESC 关闭移动菜单
     document.addEventListener("keydown", (e) => {
@@ -538,6 +572,14 @@
       renderTweets(tweets);
       renderCategoryTabs();
       renderArticlesList();
+      // 若当前在文章详情视图，刷新面包屑当前节点文字
+      const av = $("articleView");
+      const cc = $("crumbCurrent");
+      if (av && !av.hidden && cc) {
+        const wrap = $("articleWrap");
+        const active = wrap && wrap.querySelector(".article-title");
+        if (active) cc.textContent = active.textContent;
+      }
     });
   }
 
