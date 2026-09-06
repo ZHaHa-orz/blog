@@ -4,8 +4,8 @@
 
 ## 访问地址
 
-- 博客：https://blog.zhaha.cn/
-- 个人主页：https://blog.zhaha.cn/
+- 博客：https://zhaha-orz.github.io/blog/
+- 个人主页：https://zhaha-orz.github.io/
 
 ## 本地开发
 

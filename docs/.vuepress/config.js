@@ -3,8 +3,8 @@ import { defaultTheme } from '@vuepress/theme-default'
 import { defineUserConfig } from 'vuepress'
 
 export default defineUserConfig({
-    // 基础配置（自定义域名部署，使用根路径）
-    base: '/',
+    // 基础配置（GitHub Pages 子路径部署）
+    base: '/blog/',
     head: [
         ['link', { rel: 'icon', href: '/images/波吉02.jpg' }],
         ['meta', { name: 'keywords', content: '前端技术博客,Vue,JavaScript,TypeScript' }],
@@ -47,7 +47,7 @@ export default defineUserConfig({
 
         // 顶部导航栏配置
         navbar: [
-            { text: '🏠 主页', link: 'https://blog.zhaha.cn/' },
+            { text: '🏠 主页', link: 'https://zhaha-orz.github.io/' },
             { text: '📝 博客', link: '/' },
             {
                 text: '📚 导航',
