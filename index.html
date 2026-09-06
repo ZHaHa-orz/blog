@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="zh" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="庄哈哈的个人博客 — 记录生活、技术与碎碎念" />
+  <title>庄哈哈 · Zhaha Blog</title>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" />
+  <!-- Marked.js for Markdown parsing (lazy loaded per article) -->
+  <script defer src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <!-- highlight.js for code blocks -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release/build/styles/atom-one-dark.min.css" />
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release/build/highlight.min.js"></script>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <!-- ============ 顶部导航栏 ============ -->
+  <header class="navbar" id="navbar">
+    <div class="nav-inner">
+      <a class="brand" href="#" data-action="home">
+        <span class="brand-mark">庄</span>
+        <span class="brand-name" data-i18n="brand">庄哈哈</span>
+      </a>
+
+      <nav class="nav-menu" id="navMenu">
+        <a href="#" class="nav-link" data-i18n="nav.home" data-action="home">首页</a>
+        <a href="#" class="nav-link" data-i18n="nav.articles" data-action="articles">文章</a>
+        <a href="#" class="nav-link" data-i18n="nav.about" data-action="about">关于</a>
+        <a href="#" class="nav-link" data-i18n="nav.contact" data-action="contact">联系</a>
+      </nav>
+
+      <div class="nav-actions">
+        <button class="icon-btn" id="themeToggle" aria-label="切换深浅色模式" title="切换深浅色">
+          <span class="theme-icon-light">☀️</span>
+          <span class="theme-icon-dark">🌙</span>
+        </button>
+        <button class="icon-btn lang-btn" id="langToggle" aria-label="切换语言" title="中/EN 切换">
+          <span data-i18n="lang.label">中</span>
+        </button>
+        <button class="icon-btn hamburger" id="hamburger" aria-label="菜单" aria-expanded="false">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ============ 主内容区 ============ -->
+  <main class="container" id="main">
+    <!-- 文章列表视图 -->
+    <section class="view view-list" id="listView">
+      <div class="layout">
+        <!-- 左侧主栏 70% -->
+        <div class="main-col">
+          <header class="page-head">
+            <h1 class="page-title" data-i18n="home.title">最近文章</h1>
+            <p class="page-sub" data-i18n="home.subtitle">记录生活、技术与一些碎碎念</p>
+          </header>
+
+          <div class="post-list" id="postList">
+            <!-- 文章卡片由 JS 动态渲染 -->
+            <div class="loading" data-i18n="status.loading">加载中…</div>
+          </div>
+        </div>
+
+        <!-- 右侧边栏 30% -->
+        <aside class="side-col">
+          <section class="card tweet-card">
+            <h2 class="card-title">
+              <span>📌</span>
+              <span data-i18n="sidebar.tweets">最近碎碎念</span>
+            </h2>
+            <ul class="tweet-list" id="tweetList">
+              <li class="loading" data-i18n="status.loading">加载中…</li>
+            </ul>
+          </section>
+
+          <section class="card contact-card">
+            <h2 class="card-title">
+              <span>📬</span>
+              <span data-i18n="sidebar.contact">联系我</span>
+            </h2>
+            <p class="card-desc" data-i18n="sidebar.contactDesc">想聊点什么？随时找我。</p>
+            <button class="btn btn-primary" id="contactBtn" data-i18n="sidebar.contactBtn">查看联系方式</button>
+          </section>
+        </aside>
+      </div>
+    </section>
+
+    <!-- 文章详情视图 -->
+    <section class="view view-article" id="articleView" hidden>
+      <button class="back-btn" id="backBtn">
+        <span aria-hidden="true">←</span>
+        <span data-i18n="article.back">返回列表</span>
+      </button>
+      <article class="article-wrap" id="articleWrap">
+        <!-- 文章内容由 JS 渲染 -->
+      </article>
+    </section>
+
+    <!-- 关于视图 -->
+    <section class="view view-about" id="aboutView" hidden>
+      <div class="about-wrap card">
+        <h1 class="page-title" data-i18n="about.title">关于我</h1>
+        <div class="about-content" data-i18n="about.body">
+          你好，我是庄哈哈。这里是我的个人小空间，写一些技术笔记，也记一些生活的碎片。
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ============ 联系方式弹窗 ============ -->
+  <div class="modal-overlay" id="contactModal" hidden>
+    <div class="modal card" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <button class="modal-close" id="modalClose" aria-label="关闭">✕</button>
+      <h2 class="modal-title" id="modalTitle">
+        <span>📬</span>
+        <span data-i18n="modal.title">联系我</span>
+      </h2>
+      <ul class="contact-list">
+        <li class="contact-item">
+          <span class="contact-label">WeChat</span>
+          <span class="contact-value">zhh16695</span>
+        </li>
+        <li class="contact-item">
+          <span class="contact-label" data-i18n="modal.phone">电话</span>
+          <span class="contact-value">19300442279</span>
+        </li>
+        <li class="contact-item">
+          <span class="contact-label" data-i18n="modal.email">邮箱</span>
+          <span class="contact-value">zkt1669519973@163.com</span>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ============ 页脚 ============ -->
+  <footer class="footer">
+    <p class="footer-text">
+      <span data-i18n="footer.copy">© 2026 庄哈哈. 由温暖与好奇心驱动.</span>
+    </p>
+  </footer>
+
+  <!-- ============ 脚本（按依赖顺序加载） ============ -->
+  <script src="js/i18n.js"></script>
+  <script src="js/theme.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

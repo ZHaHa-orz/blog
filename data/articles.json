@@ -1,0 +1,41 @@
+[
+  {
+    "file": "hello-zhaha.md",
+    "date": "2026-09-01",
+    "tag": { "zh": "随笔", "en": "Essay" },
+    "title": {
+      "zh": "你好，庄哈哈",
+      "en": "Hello, Zhaha"
+    },
+    "summary": {
+      "zh": "这是博客的第一篇，聊聊为什么开始写、想写些什么，以及这个名字背后的温度。",
+      "en": "The first post — why I started writing, what I want to write about, and the warmth behind the name."
+    }
+  },
+  {
+    "file": "lazy-load-markdown.md",
+    "date": "2026-08-20",
+    "tag": { "zh": "前端", "en": "Frontend" },
+    "title": {
+      "zh": "用原生 JS 实现 Markdown 懒加载",
+      "en": "Lazy-load Markdown with Vanilla JS"
+    },
+    "summary": {
+      "zh": "一个不依赖框架的小博客，如何让文章在点击后才请求、解析与高亮，并缓存结果。",
+      "en": "A framework-free blog: fetch, parse and highlight only on click, then cache the result."
+    }
+  },
+  {
+    "file": "warm-color-system.md",
+    "date": "2026-08-10",
+    "tag": { "zh": "设计", "en": "Design" },
+    "title": {
+      "zh": "暖色系博客的色彩系统",
+      "en": "A Warm Color System for a Blog"
+    },
+    "summary": {
+      "zh": "奶油白、焦糖棕、暖杏色——记录这套温柔配色从 CSS 变量到深浅双模式的搭建思路。",
+      "en": "Cream, caramel, apricot — notes on building a gentle palette with CSS variables and dual modes."
+    }
+  }
+]
