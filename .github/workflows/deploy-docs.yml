@@ -49,14 +49,25 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      # 将博客仓库的 Pages 源切换到 gh-pages 分支
+      # 将博客仓库的 Pages 源切换到 gh-pages 分支（支持创建或更新）
       - name: 更新 Pages 源为 gh-pages 分支
         run: |
-          curl -sS -X PUT \
+          # 先尝试更新（PUT），若站点不存在则创建（POST）
+          HTTP_CODE=$(curl -sS -o /dev/null -w "%{http_code}" -X PUT \
             -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
             -H "Accept: application/vnd.github+json" \
             https://api.github.com/repos/${{ github.repository }}/pages \
-            -d '{"source":{"branch":"gh-pages","path":"/"}}'
+            -d '{"source":{"branch":"gh-pages","path":"/"}}')
+          if [ "$HTTP_CODE" = "404" ]; then
+            echo "Pages 站点不存在，正在创建..."
+            curl -sS -X POST \
+              -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+              -H "Accept: application/vnd.github+json" \
+              https://api.github.com/repos/${{ github.repository }}/pages \
+              -d '{"source":{"branch":"gh-pages","path":"/"}}'
+          else
+            echo "Pages 源更新成功 (HTTP $HTTP_CODE)"
+          fi
 
       # 删除旧的 blog_pages 分支
       - name: 删除旧的 blog_pages 分支
