@@ -20,6 +20,12 @@ const I18N = {
 
     "home.title":       "最近文章",
     "home.subtitle":    "记录生活、技术与一些碎碎念",
+    "home.pinned":      "置顶文章",
+    "home.latest":      "最新文章",
+
+    "articles.title":   "全部文章",
+    "articles.subtitle":"按分类浏览所有文章",
+    "articles.all":     "全部",
 
     "sidebar.tweets":     "最近碎碎念",
     "sidebar.contact":    "联系我",
@@ -66,6 +72,12 @@ const I18N = {
 
     "home.title":       "Recent Posts",
     "home.subtitle":    "Notes on life, code, and little thoughts",
+    "home.pinned":      "Pinned",
+    "home.latest":      "Latest",
+
+    "articles.title":   "All Posts",
+    "articles.subtitle":"Browse all posts by category",
+    "articles.all":     "All",
 
     "sidebar.tweets":     "Recent Tweets",
     "sidebar.contact":    "Contact Me",

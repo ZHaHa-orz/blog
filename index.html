@@ -11,7 +11,7 @@
   <!-- highlight.js for code blocks -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release/build/styles/atom-one-dark.min.css" />
   <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release/build/highlight.min.js"></script>
-  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/style.css?v=2" />
 </head>
 <body>
   <!-- ============ 顶部导航栏 ============ -->
@@ -23,17 +23,37 @@
         <span class="brand-name" data-i18n="brand">庄哈哈</span>
       </a>
 
-      <!-- 中间：音乐播放器 -->
+      <!-- 中间：音乐播放器（播放/暂停 + 进度 + 音量 + 播放列表） -->
       <div class="music-player" id="musicPlayer">
         <button class="music-play-btn" id="musicPlayBtn" aria-label="播放/暂停">
           <span class="play-icon">▶</span>
           <span class="pause-icon">⏸</span>
         </button>
-        <div class="music-info">
-          <span class="music-title">森の小さなレストラン</span>
-          <span class="music-artist">手嶌葵</span>
+
+        <div class="music-body">
+          <div class="music-meta">
+            <span class="music-title" id="musicTitle">森の小さなレストラン</span>
+            <span class="music-artist" id="musicArtist">手嶌葵</span>
+          </div>
+          <div class="music-progress">
+            <span class="music-time" id="musicCurrent">0:00</span>
+            <input type="range" class="music-seek" id="musicSeek" min="0" max="1000" value="0" aria-label="播放进度" />
+            <span class="music-time" id="musicDuration">0:00</span>
+          </div>
         </div>
-        <audio id="bgAudio" src="assets/森の小さなレストラン.mp3" loop preload="none"></audio>
+
+        <div class="music-extra">
+          <button class="music-icon-btn" id="musicVolBtn" aria-label="静音" title="静音">🔊</button>
+          <input type="range" class="music-volume" id="musicVolume" min="0" max="100" value="70" aria-label="音量" />
+          <button class="music-icon-btn" id="musicPlaylistBtn" aria-label="播放列表" title="播放列表">☰</button>
+        </div>
+
+        <!-- 播放列表（下拉面板） -->
+        <div class="music-playlist" id="musicPlaylist" hidden>
+          <ul id="playlistList"></ul>
+        </div>
+
+        <audio id="bgAudio" src="assets/森の小さなレストラン.mp3" preload="metadata"></audio>
       </div>
 
       <nav class="nav-menu" id="navMenu">
@@ -60,9 +80,9 @@
 
   <!-- ============ 主内容区 ============ -->
   <main class="container" id="main">
-    <!-- 首页视图：Hero + 文章列表 -->
+    <!-- 首页视图：Hero(全屏) + 文章列表(渐显) -->
     <section class="view view-list" id="listView">
-      <!-- Hero 区 -->
+      <!-- Hero 区：占满首屏 -->
       <section class="hero" id="hero">
         <img class="hero-avatar" src="assets/avatar.jpg" alt="庄哈哈" />
         <h1 class="hero-greeting" data-i18n="hero.greeting">Hi, I am 庄哈哈 (Zhaha) 👋</h1>
@@ -76,10 +96,13 @@
             <span aria-hidden="true">↗</span>
           </a>
         </div>
+        <a href="#postsSection" class="hero-scroll-hint" aria-label="向下滚动">
+          <span>↓</span>
+        </a>
       </section>
 
-      <!-- 文章 + 侧栏 -->
-      <div class="layout" id="postsSection">
+      <!-- 文章 + 侧栏：滚动到此处渐显 -->
+      <div class="layout reveal" id="postsSection">
         <!-- 左侧主栏 70% -->
         <div class="main-col">
           <header class="page-head">
@@ -87,14 +110,24 @@
             <p class="page-sub" data-i18n="home.subtitle">记录生活、技术与一些碎碎念</p>
           </header>
 
-          <div class="post-list" id="postList">
-            <div class="loading" data-i18n="status.loading">加载中…</div>
+          <!-- 置顶文章 -->
+          <div class="post-section" id="pinnedSection" hidden>
+            <h2 class="section-label"><span>📌</span> <span data-i18n="home.pinned">置顶文章</span></h2>
+            <div class="post-list" id="pinnedList"></div>
+          </div>
+
+          <!-- 最新文章 -->
+          <div class="post-section" id="latestSection">
+            <h2 class="section-label"><span>🕒</span> <span data-i18n="home.latest">最新文章</span></h2>
+            <div class="post-list" id="latestList">
+              <div class="loading" data-i18n="status.loading">加载中…</div>
+            </div>
           </div>
         </div>
 
         <!-- 右侧边栏 30% -->
         <aside class="side-col">
-          <section class="card tweet-card">
+          <section class="card tweet-card reveal">
             <h2 class="card-title">
               <span>📌</span>
               <span data-i18n="sidebar.tweets">最近碎碎念</span>
@@ -104,7 +137,7 @@
             </ul>
           </section>
 
-          <section class="card contact-card">
+          <section class="card contact-card reveal">
             <h2 class="card-title">
               <span>📬</span>
               <span data-i18n="sidebar.contact">联系我</span>
@@ -123,6 +156,23 @@
         <span data-i18n="article.back">返回列表</span>
       </button>
       <article class="article-wrap" id="articleWrap"></article>
+    </section>
+
+    <!-- 文章分类视图 -->
+    <section class="view view-articles" id="articlesView" hidden>
+      <header class="page-head">
+        <h1 class="page-title" data-i18n="articles.title">全部文章</h1>
+        <p class="page-sub" data-i18n="articles.subtitle">按分类浏览所有文章</p>
+      </header>
+
+      <div class="category-tabs" id="categoryTabs">
+        <button class="cat-tab active" data-cat="all" data-i18n="articles.all">全部</button>
+        <!-- 分类标签由 JS 动态渲染 -->
+      </div>
+
+      <div class="post-list" id="articlesList">
+        <div class="loading" data-i18n="status.loading">加载中…</div>
+      </div>
     </section>
 
     <!-- 关于视图 -->
@@ -209,8 +259,8 @@
   </footer>
 
   <!-- ============ 脚本（按依赖顺序加载） ============ -->
-  <script src="js/i18n.js"></script>
-  <script src="js/theme.js"></script>
-  <script src="js/main.js"></script>
+  <script src="js/i18n.js?v=2"></script>
+  <script src="js/theme.js?v=2"></script>
+  <script src="js/main.js?v=2"></script>
 </body>
 </html>

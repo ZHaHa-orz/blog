@@ -2,7 +2,9 @@
   {
     "file": "hello-zhaha.md",
     "date": "2026-09-01",
+    "pinned": true,
     "tag": { "zh": "随笔", "en": "Essay" },
+    "category": { "zh": "随笔", "en": "Essay" },
     "title": {
       "zh": "你好，庄哈哈",
       "en": "Hello, Zhaha"
@@ -15,7 +17,9 @@
   {
     "file": "lazy-load-markdown.md",
     "date": "2026-08-20",
+    "pinned": true,
     "tag": { "zh": "前端", "en": "Frontend" },
+    "category": { "zh": "前端", "en": "Frontend" },
     "title": {
       "zh": "用原生 JS 实现 Markdown 懒加载",
       "en": "Lazy-load Markdown with Vanilla JS"
@@ -28,7 +32,9 @@
   {
     "file": "warm-color-system.md",
     "date": "2026-08-10",
+    "pinned": false,
     "tag": { "zh": "设计", "en": "Design" },
+    "category": { "zh": "设计", "en": "Design" },
     "title": {
       "zh": "暖色系博客的色彩系统",
       "en": "A Warm Color System for a Blog"
@@ -36,6 +42,51 @@
     "summary": {
       "zh": "奶油白、焦糖棕、暖杏色——记录这套温柔配色从 CSS 变量到深浅双模式的搭建思路。",
       "en": "Cream, caramel, apricot — notes on building a gentle palette with CSS variables and dual modes."
+    }
+  },
+  {
+    "file": "shantou-food.md",
+    "date": "2026-08-28",
+    "pinned": false,
+    "tag": { "zh": "生活", "en": "Life" },
+    "category": { "zh": "生活", "en": "Life" },
+    "title": {
+      "zh": "汕头觅食记：藏在巷子里的牛肉火锅",
+      "en": "Eating in Shantou: Beef Hotpot Hidden in the Alley"
+    },
+    "summary": {
+      "zh": "回到家乡，用一个下午的时间，把从街头吃到巷尾的幸福感写下来。",
+      "en": "Back in my hometown, spending an afternoon eating from street to alley — pure happiness."
+    }
+  },
+  {
+    "file": "css-grid-notes.md",
+    "date": "2026-07-15",
+    "pinned": false,
+    "tag": { "zh": "前端", "en": "Frontend" },
+    "category": { "zh": "前端", "en": "Frontend" },
+    "title": {
+      "zh": "CSS Grid 实战笔记：从布局到响应式",
+      "en": "CSS Grid in Practice: From Layout to Responsive"
+    },
+    "summary": {
+      "zh": "记录几个真实项目里用到的 Grid 技巧，包括自动填充、子网格与断点策略。",
+      "en": "A few Grid tricks from real projects: auto-fill, subgrid, and breakpoint strategies."
+    }
+  },
+  {
+    "file": "morning-routine.md",
+    "date": "2026-07-02",
+    "pinned": false,
+    "tag": { "zh": "随笔", "en": "Essay" },
+    "category": { "zh": "随笔", "en": "Essay" },
+    "title": {
+      "zh": "我的晨间仪式：自律是温柔的",
+      "en": "My Morning Routine: Discipline Can Be Gentle"
+    },
+    "summary": {
+      "zh": "坚持了一年的早起习惯，不是苦行僧式的，而是给自己一份从容的开始。",
+      "en": "A year of early rising — not ascetic, but a gentle, unhurried start to the day."
     }
   }
 ]

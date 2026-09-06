@@ -1,9 +1,11 @@
 /* ============================================================
  * main.js — 主逻辑入口
- * - 文章列表渲染
+ * - 首页：置顶文章 + 最新文章
+ * - 文章分类页（按分类筛选）
  * - Markdown 懒加载（点击标题后再 fetch）
- * - 视图切换（列表 / 文章 / 关于 / 联系）
- * - 音乐播放器（点击播放，默认暂停）
+ * - 视图切换（首页 / 文章分类 / 文章详情 / 关于 / 联系）
+ * - 音乐播放器（播放/暂停 + 进度条 + 音量 + 播放列表切换）
+ * - 滚动渐显（IntersectionObserver）
  * - 移动端汉堡菜单
  * - 主题 & 语言按钮绑定
  * ============================================================ */
@@ -14,7 +16,21 @@
   /* ---------- 状态 ---------- */
   let articles = [];
   let tweets = [];
+  let currentCategory = "all";
   const articleCache = new Map(); // file -> rendered html
+
+  /**
+   * 播放列表 —— 后期上传新音乐后，在此数组追加即可自动出现在列表中。
+   * 每项格式：{ title: "曲名", artist: "歌手", src: "assets/xxx.mp3" }
+   */
+  const playlist = [
+    {
+      title: "森の小さなレストラン",
+      artist: "手嶌葵",
+      src: "assets/森の小さなレストラン.mp3"
+    }
+  ];
+  let currentSongIndex = 0;
 
   /* ---------- DOM 引用 ---------- */
   const $ = (id) => document.getElementById(id);
@@ -35,7 +51,7 @@
     });
   }
 
-  /** 简易 HTML 转义，用于插入来自 JSON 的文本字段 */
+  /** 简易 HTML 转义 */
   function esc(str) {
     return String(str)
       .replace(/&/g, "&amp;")
@@ -57,31 +73,114 @@
     return fmtDate(iso, lang);
   }
 
-  /* ---------- 渲染：文章列表 ---------- */
-  function renderPostList(list) {
-    const wrap = $("postList");
-    if (!list.length) {
+  /** 秒 → m:ss */
+  function fmtTime(sec) {
+    if (!isFinite(sec) || sec < 0) return "0:00";
+    const m = Math.floor(sec / 60);
+    const s = Math.floor(sec % 60);
+    return `${m}:${s.toString().padStart(2, "0")}`;
+  }
+
+  /** 生成单篇文章卡片 HTML */
+  function articleCardHTML(a, lang) {
+    return `
+      <article class="post-card" data-file="${esc(a.file)}">
+        <h2 class="post-card-title">${esc(a.title[lang] || a.title.zh)}</h2>
+        <p class="post-card-summary">${esc(a.summary[lang] || a.summary.zh)}</p>
+        <div class="post-card-meta">
+          <span class="post-card-tag">${esc(a.tag[lang] || a.tag.zh || "")}</span>
+          <time>${fmtDate(a.date, lang)}</time>
+        </div>
+      </article>`;
+  }
+
+  /** 为一组文章卡片绑定点击事件 */
+  function bindCardClicks(container) {
+    container.querySelectorAll(".post-card").forEach((card) => {
+      card.addEventListener("click", () => openArticle(card.dataset.file));
+    });
+  }
+
+  /* ---------- 渲染：首页文章（置顶 + 最新） ---------- */
+  function renderHomeArticles() {
+    const lang = getLang();
+    // 按日期降序排序
+    const sorted = [...articles].sort(
+      (a, b) => new Date(b.date) - new Date(a.date)
+    );
+    const pinned = sorted.filter((a) => a.pinned);
+    const latest = sorted.filter((a) => !a.pinned);
+
+    const pinnedWrap = $("pinnedList");
+    const pinnedSection = $("pinnedSection");
+    const latestWrap = $("latestList");
+
+    if (pinned.length) {
+      pinnedSection.hidden = false;
+      pinnedWrap.innerHTML = pinned.map((a) => articleCardHTML(a, lang)).join("");
+      bindCardClicks(pinnedWrap);
+    } else {
+      pinnedSection.hidden = true;
+    }
+
+    if (latest.length) {
+      latestWrap.innerHTML = latest.map((a) => articleCardHTML(a, lang)).join("");
+    } else {
+      latestWrap.innerHTML = `<div class="empty">${esc(t("status.empty"))}</div>`;
+    }
+    bindCardClicks(latestWrap);
+  }
+
+  /* ---------- 渲染：分类页文章列表 ---------- */
+  function renderArticlesList() {
+    const lang = getLang();
+    const wrap = $("articlesList");
+    const sorted = [...articles].sort(
+      (a, b) => new Date(b.date) - new Date(a.date)
+    );
+    const filtered =
+      currentCategory === "all"
+        ? sorted
+        : sorted.filter((a) => (a.category && a.category[lang]) === currentCategory);
+
+    if (!filtered.length) {
       wrap.innerHTML = `<div class="empty">${esc(t("status.empty"))}</div>`;
       return;
     }
-    const lang = getLang();
-    wrap.innerHTML = list
-      .map(
-        (a) => `
-        <article class="post-card" data-file="${esc(a.file)}">
-          <h2 class="post-card-title">${esc(a.title[lang] || a.title.zh)}</h2>
-          <p class="post-card-summary">${esc(a.summary[lang] || a.summary.zh)}</p>
-          <div class="post-card-meta">
-            <span class="post-card-tag">${esc(a.tag[lang] || a.tag.zh || "")}</span>
-            <time>${fmtDate(a.date, lang)}</time>
-          </div>
-        </article>`
-      )
-      .join("");
+    wrap.innerHTML = filtered.map((a) => articleCardHTML(a, lang)).join("");
+    bindCardClicks(wrap);
+  }
 
-    // 绑定点击 → 进入文章详情
-    wrap.querySelectorAll(".post-card").forEach((card) => {
-      card.addEventListener("click", () => openArticle(card.dataset.file));
+  /* ---------- 渲染：分类标签 ---------- */
+  function renderCategoryTabs() {
+    const lang = getLang();
+    const tabsWrap = $("categoryTabs");
+    // 收集所有分类
+    const cats = new Set();
+    articles.forEach((a) => {
+      if (a.category && a.category[lang]) cats.add(a.category[lang]);
+    });
+
+    // 保留 "全部" 按钮，移除旧的分类按钮（除了第一个 .all）
+    tabsWrap.querySelectorAll(".cat-tab[data-cat]:not([data-cat='all'])")
+      .forEach((n) => n.remove());
+
+    cats.forEach((cat) => {
+      const btn = document.createElement("button");
+      btn.className = "cat-tab";
+      btn.dataset.cat = cat;
+      btn.textContent = cat;
+      tabsWrap.appendChild(btn);
+    });
+
+    // 绑定分类切换
+    tabsWrap.querySelectorAll(".cat-tab").forEach((tab) => {
+      tab.addEventListener("click", () => {
+        tabsWrap.querySelectorAll(".cat-tab").forEach((t) => t.classList.remove("active"));
+        tab.classList.add("active");
+        currentCategory = tab.dataset.cat;
+        renderArticlesList();
+      });
     });
   }
 
@@ -93,7 +192,7 @@
       return;
     }
     const lang = getLang();
-    const latest = list.slice(0, 3); // 最新 3 条
+    const latest = list.slice(0, 3);
     wrap.innerHTML = latest
       .map(
         (tw) => `
@@ -108,9 +207,6 @@
   /* ---------- 加载：文章详情（懒加载） ---------- */
   async function openArticle(file) {
     const wrap = $("articleWrap");
-    const view = $("articleView");
-
-    // 切换视图
     showView("article");
     wrap.innerHTML = `<div class="loading">${esc(t("article.loading"))}</div>`;
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -124,12 +220,10 @@
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const md = await res.text();
 
-        // 使用 marked 解析 markdown
         if (window.marked) {
           marked.setOptions({ breaks: true, gfm: true });
           html = marked.parse(md);
         } else {
-          // marked 还没加载完：最简 fallback，用 pre 包裹
           html = `<pre><code>${esc(md)}</code></pre>`;
         }
         articleCache.set(file, html);
@@ -147,7 +241,6 @@
         </header>
         <div class="article-body">${html}</div>`;
 
-      // 代码高亮
       if (window.hljs) {
         wrap.querySelectorAll("pre code").forEach((b) => {
           try { window.hljs.highlightElement(b); } catch (e) { /* 忽略 */ }
@@ -163,43 +256,179 @@
   function showView(name) {
     const views = {
       list: "listView",
+      articles: "articlesView",
       article: "articleView",
       about: "aboutView",
       contact: "contactView"
     };
     Object.entries(views).forEach(([k, id]) => {
       const el = $(id);
-      if (k === name) el.hidden = false;
-      else el.hidden = true;
+      if (el) el.hidden = k !== name;
     });
-    // 关闭移动端菜单
     closeMobileMenu();
   }
 
-  /* ---------- 音乐播放器 ---------- */
+  /* ---------- 音乐播放器（完整版） ---------- */
   function initMusicPlayer() {
     const audio = $("bgAudio");
-    const btn = $("musicPlayBtn");
-    if (!audio || !btn) return;
+    const playBtn = $("musicPlayBtn");
+    const seek = $("musicSeek");
+    const curEl = $("musicCurrent");
+    const durEl = $("musicDuration");
+    const volBtn = $("musicVolBtn");
+    const volSlider = $("musicVolume");
+    const plBtn = $("musicPlaylistBtn");
+    const plPanel = $("musicPlaylist");
+    const plList = $("playlistList");
+    const titleEl = $("musicTitle");
+    const artistEl = $("musicArtist");
 
-    audio.volume = 0.7;
+    if (!audio || !playBtn) return;
 
-    btn.addEventListener("click", async () => {
+    let lastVolume = 0.7;
+
+    /** 加载指定索引的歌曲 */
+    function loadSong(index) {
+      currentSongIndex = index;
+      const song = playlist[index];
+      audio.src = song.src;
+      titleEl.textContent = song.title;
+      artistEl.textContent = song.artist;
+      renderPlaylist();
+    }
+
+    /** 渲染播放列表 */
+    function renderPlaylist() {
+      plList.innerHTML = playlist
+        .map(
+          (s, i) => `
+          <li class="playlist-item ${i === currentSongIndex ? "active" : ""}" data-index="${i}">
+            <span class="pl-index">${String(i + 1).padStart(2, "0")}</span>
+            <span class="pl-info">
+              <span class="pl-title">${esc(s.title)}</span>
+              <span class="pl-artist">${esc(s.artist)}</span>
+            </span>
+            ${i === currentSongIndex ? '<span class="pl-playing">♪</span>' : ""}
+          </li>`
+        )
+        .join("");
+
+      plList.querySelectorAll(".playlist-item").forEach((item) => {
+        item.addEventListener("click", () => {
+          const idx = parseInt(item.dataset.index, 10);
+          if (idx === currentSongIndex) {
+            // 同一首：切换播放
+            togglePlay();
+          } else {
+            loadSong(idx);
+            audio.play().catch(() => {});
+          }
+        });
+      });
+    }
+
+    /** 切换播放/暂停 */
+    async function togglePlay() {
       try {
         if (audio.paused) {
           await audio.play();
-          btn.classList.add("playing");
+          playBtn.classList.add("playing");
         } else {
           audio.pause();
-          btn.classList.remove("playing");
+          playBtn.classList.remove("playing");
         }
       } catch (err) {
         console.error("[music] play failed:", err);
       }
+    }
+
+    playBtn.addEventListener("click", togglePlay);
+
+    // 元数据加载 → 显示总时长
+    audio.addEventListener("loadedmetadata", () => {
+      durEl.textContent = fmtTime(audio.duration);
     });
 
-    // 播放结束（loop 时一般不会触发，但保险起见）
-    audio.addEventListener("ended", () => btn.classList.remove("playing"));
+    // 时间更新 → 进度条
+    audio.addEventListener("timeupdate", () => {
+      if (audio.duration) {
+        const pct = (audio.currentTime / audio.duration) * 1000;
+        seek.value = String(pct);
+      }
+      curEl.textContent = fmtTime(audio.currentTime);
+    });
+
+    // 拖动进度条 → seek
+    seek.addEventListener("input", () => {
+      if (audio.duration) {
+        audio.currentTime = (parseFloat(seek.value) / 1000) * audio.duration;
+      }
+    });
+
+    // 音量滑块
+    volSlider.addEventListener("input", () => {
+      const v = parseInt(volSlider.value, 10) / 100;
+      audio.volume = v;
+      audio.muted = v === 0;
+      updateVolIcon();
+    });
+
+    // 静音按钮
+    volBtn.addEventListener("click", () => {
+      if (audio.muted || audio.volume === 0) {
+        audio.muted = false;
+        audio.volume = lastVolume || 0.7;
+        volSlider.value = String(Math.round(audio.volume * 100));
+      } else {
+        lastVolume = audio.volume;
+        audio.muted = true;
+        volSlider.value = "0";
+      }
+      updateVolIcon();
+    });
+
+    function updateVolIcon() {
+      if (audio.muted || audio.volume === 0) volBtn.textContent = "🔇";
+      else if (audio.volume < 0.5) volBtn.textContent = "🔉";
+      else volBtn.textContent = "🔊";
+    }
+
+    // 播放列表开关
+    plBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      plPanel.hidden = !plPanel.hidden;
+    });
+    // 点击外部关闭播放列表
+    document.addEventListener("click", (e) => {
+      if (!$("musicPlayer").contains(e.target)) plPanel.hidden = true;
+    });
+
+    // 初始化
+    audio.volume = 0.7;
+    loadSong(0);
+    updateVolIcon();
+  }
+
+  /* ---------- 滚动渐显（IntersectionObserver） ---------- */
+  function initRevealObserver() {
+    const els = document.querySelectorAll(".reveal");
+    if (!("IntersectionObserver" in window)) {
+      // 不支持的浏览器直接全部显示
+      els.forEach((el) => el.classList.add("visible"));
+      return;
+    }
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("visible");
+            io.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.15, rootMargin: "0px 0px -60px 0px" }
+    );
+    els.forEach((el) => io.observe(el));
   }
 
   /* ---------- 移动端菜单 ---------- */
@@ -226,10 +455,12 @@
       const res = await fetch("data/articles.json");
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       articles = await res.json();
-      renderPostList(articles);
+      renderHomeArticles();
+      renderCategoryTabs();
+      renderArticlesList();
     } catch (err) {
       console.error("[loadArticles] failed:", err);
-      $("postList").innerHTML =
+      $("latestList").innerHTML =
         `<div class="empty">${esc(t("status.empty"))}</div>`;
     }
   }
@@ -258,7 +489,7 @@
     // 汉堡菜单
     $("hamburger").addEventListener("click", toggleMobileMenu);
 
-    // 导航 action（统一委托）
+    // 导航 action
     document.querySelectorAll("[data-action]").forEach((el) => {
       el.addEventListener("click", (e) => {
         e.preventDefault();
@@ -269,15 +500,8 @@
             window.scrollTo({ top: 0, behavior: "smooth" });
             break;
           case "articles":
-            // 若已在首页，平滑滚动到文章区；否则先切回首页再滚动
-            showView("list");
-            setTimeout(() => {
-              const posts = $("postsSection");
-              if (posts) {
-                const top = posts.getBoundingClientRect().top + window.scrollY - 80;
-                window.scrollTo({ top, behavior: "smooth" });
-              }
-            }, 60);
+            showView("articles");
+            window.scrollTo({ top: 0, behavior: "smooth" });
             break;
           case "about":
             showView("about");
@@ -310,27 +534,25 @@
 
     // 语言切换后重渲染动态内容
     document.addEventListener("langchange", () => {
-      renderPostList(articles);
+      renderHomeArticles();
       renderTweets(tweets);
+      renderCategoryTabs();
+      renderArticlesList();
     });
   }
 
   /* ---------- 启动 ---------- */
   function init() {
-    // 应用初始主题（在 head 已设默认 light，这里覆盖为真实偏好）
     applyTheme(getInitialTheme());
-    // 应用初始语言
     applyLang(currentLang);
-    // 绑定事件
     bindEvents();
-    // 初始化音乐播放器（默认暂停）
     initMusicPlayer();
-    // 加载数据
     loadArticles();
     loadTweets();
+    // 在内容渲染后初始化渐显观察（延迟一帧确保 DOM 就绪）
+    requestAnimationFrame(initRevealObserver);
   }
 
-  // DOM 就绪后启动
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", init);
   } else {
