@@ -25,11 +25,16 @@
    * 每项格式：{ title: "曲名", artist: "歌手", src: "assets/xxx.mp3" }
    */
   const playlist = [
-    {
-      title: "森の小さなレストラン",
-      artist: "手嶌葵",
-      src: "assets/森の小さなレストラン.mp3"
-    }
+    { title: "森の小さなレストラン", artist: "手嶌葵", src: "assets/森の小さなレストラン.mp3" },
+    { title: "Kiss The Rain", artist: "Yiruma", src: "assets/Kiss The Rain.mp3" },
+    { title: "The Rain", artist: "久石让", src: "assets/The Rain.mp3" },
+    { title: "風になる", artist: "つじあやの", src: "assets/風になる.mp3" },
+    { title: "いつも何度でも", artist: "宗次郎", src: "assets/いつも何度でも.mp3" },
+    { title: "午后柠檬树下的阳光", artist: "Depapepe", src: "assets/午后柠檬树下的阳光.mp3" },
+    { title: "Subwoofer Lullaby", artist: "C418", src: "assets/Subwoofer Lullaby.mp3" },
+    { title: "Minecraft", artist: "C418", src: "assets/Minecraft.mp3" },
+    { title: "Zombies on Your Lawn", artist: "Laura Shigihara", src: "assets/Zombies on Your Lawn.mp3" },
+    { title: "愛にできることはまだあるかい", artist: "RADWIMPS", src: "assets/愛にできることはまだあるかい.mp3" }
   ];
   let currentSongIndex = 0;
 
@@ -291,7 +296,7 @@
     const curEl = $("musicCurrent");
     const durEl = $("musicDuration");
     const volBtn = $("musicVolBtn");
-    const volSlider = $("musicVolume");
+    const volDots = $("volDots");
     const plBtn = $("musicPlaylistBtn");
     const plPanel = $("musicPlaylist");
     const plList = $("playlistList");
@@ -412,37 +417,33 @@
     });
     seek.addEventListener("change", () => { seeking = false; });
 
-    // 音量滑块
-    volSlider.addEventListener("input", () => {
-      const v = parseInt(volSlider.value, 10) / 100;
-      audio.volume = v;
-      audio.muted = v === 0;
-      updateVolIcon();
-      updateVolFill();
+    // 音量圆点：点击设置对应音量等级
+    volDots.querySelectorAll(".vol-dot").forEach((dot) => {
+      dot.addEventListener("click", (e) => {
+        e.stopPropagation();
+        const v = parseInt(dot.dataset.vol, 10) / 100;
+        audio.muted = false;
+        audio.volume = v;
+        lastVolume = v;
+        updateVolIcon();
+        updateVolDots();
+      });
     });
 
-    /** 同步音量滑块轨道的已填充比例（CSS 变量 --vol） */
-    function updateVolFill() {
-      const pct = Math.round((audio.muted ? 0 : audio.volume) * 100);
-      volSlider.style.setProperty("--vol", pct + "%");
+    /** 更新音量圆点的激活状态 */
+    function updateVolDots() {
+      const vol = audio.muted ? 0 : audio.volume;
+      volDots.querySelectorAll(".vol-dot").forEach((dot) => {
+        const dotVol = parseInt(dot.dataset.vol, 10) / 100;
+        dot.classList.toggle("active", vol >= dotVol - 0.01);
+      });
     }
 
-    // 音量区域（桌面端 hover 展开 + 拖动时保持展开；移动端点击展开）
+    // 音量区域（桌面端 hover 展开；移动端点击展开）
     const volWrap = $("musicVolumeWrap");
     const isTouch = window.matchMedia("(pointer: coarse)").matches || "ontouchstart" in window;
 
-    // 桌面端：拖动音量滑块时保持展开，松开后由 hover 决定是否隐藏
-    if (volWrap && !isTouch) {
-      volSlider.addEventListener("pointerdown", () => volWrap.classList.add("vol-open"));
-      document.addEventListener("pointerup", () => {
-        volWrap.classList.remove("vol-open");
-        volSlider.blur();
-      });
-      // 鼠标移出时失焦，避免残留焦点状态
-      volWrap.addEventListener("mouseleave", () => volSlider.blur());
-    }
-
-    // 静音按钮：桌面端点击切换静音；移动端点击展开/收起滑块
+    // 音量按钮：桌面端点击切换静音；移动端点击展开/收起圆点
     volBtn.addEventListener("click", () => {
       if (isTouch && volWrap) {
         volWrap.classList.toggle("vol-open");
@@ -451,17 +452,15 @@
       if (audio.muted || audio.volume === 0) {
         audio.muted = false;
         audio.volume = lastVolume || 0.7;
-        volSlider.value = String(Math.round(audio.volume * 100));
       } else {
         lastVolume = audio.volume;
         audio.muted = true;
-        volSlider.value = "0";
       }
       updateVolIcon();
-      updateVolFill();
+      updateVolDots();
     });
 
-    // 移动端：点击外部收起滑块
+    // 移动端：点击外部收起圆点
     if (isTouch && volWrap) {
       document.addEventListener("click", (e) => {
         if (volWrap && !volWrap.contains(e.target)) {
@@ -470,10 +469,13 @@
       });
     }
 
+    /** 更新音量图标状态（4 档） */
     function updateVolIcon() {
-      volBtn.classList.remove("muted", "low");
+      volBtn.classList.remove("muted", "low", "mid", "high");
       if (audio.muted || audio.volume === 0) volBtn.classList.add("muted");
-      else if (audio.volume < 0.5) volBtn.classList.add("low");
+      else if (audio.volume <= 0.33) volBtn.classList.add("low");
+      else if (audio.volume <= 0.66) volBtn.classList.add("mid");
+      else volBtn.classList.add("high");
     }
 
     // 播放列表开关
@@ -490,7 +492,7 @@
     audio.volume = 0.7;
     loadSong(0);
     updateVolIcon();
-    updateVolFill();
+    updateVolDots();
     // 页面空闲后后台预加载音频，减少首次点击播放的等待
     if ("requestIdleCallback" in window) {
       requestIdleCallback(() => audio.load());

@@ -228,67 +228,46 @@ img { max-width: 100%; display: block; }
   gap: 6px;
   flex-shrink: 0;
 }
-/* 音量区域：滑块水平向左展开，展开时压缩进度条 */
+/* 音量区域：圆点向左展开，展开时压缩进度条 */
 .music-volume-wrap {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 6px;
   flex-shrink: 0;
 }
-.music-volume {
-  -webkit-appearance: none;
-  appearance: none;
+/* 音量圆点容器 */
+.vol-dots {
+  display: flex;
+  align-items: center;
+  gap: 5px;
   width: 0;
-  height: 4px;
   opacity: 0;
   overflow: hidden;
-  background: transparent;
-  cursor: pointer;
   transition: width .25s ease, opacity .25s ease;
-  --vol: 70%;
 }
-.music-volume-wrap:hover .music-volume,
-.music-volume-wrap.vol-open .music-volume {
-  width: 70px;
+.music-volume-wrap:hover .vol-dots,
+.music-volume-wrap.vol-open .vol-dots {
+  width: 56px;
   opacity: 1;
 }
-/* 水平音量滑块轨道（左侧为已选音量） */
-.music-volume::-webkit-slider-runnable-track {
-  height: 4px;
-  border-radius: 4px;
-  background: linear-gradient(
-    to right,
-    var(--accent) 0%,
-    var(--accent) var(--vol, 70%),
-    var(--card) var(--vol, 70%),
-    var(--card) 100%
-  );
-}
-.music-volume::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 12px; height: 12px;
+/* 单个圆点 */
+.vol-dot {
+  width: 7px; height: 7px;
   border-radius: 50%;
-  background: var(--accent);
-  margin-top: -4px;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, .2);
-}
-.music-volume::-moz-range-track {
-  height: 4px;
-  border-radius: 4px;
   background: var(--card);
+  cursor: pointer;
+  transition: background .15s, transform .15s;
+  flex-shrink: 0;
 }
-.music-volume::-moz-range-progress {
-  height: 4px;
-  border-radius: 4px;
-  background: var(--accent);
-}
-.music-volume::-moz-range-thumb {
-  width: 12px; height: 12px;
-  border: none;
-  border-radius: 50%;
-  background: var(--accent);
-}
+.vol-dot.active { background: var(--accent); }
+.vol-dot:hover { transform: scale(1.3); }
+
+/* 音量 SVG 图标显示/隐藏逻辑 */
+.music-vol-btn .vol-icon { display: none; }
+.music-vol-btn.muted .vol-icon-0 { display: block; }
+.music-vol-btn.low .vol-icon-1 { display: block; }
+.music-vol-btn.mid .vol-icon-2 { display: block; }
+.music-vol-btn.high .vol-icon-3 { display: block; }
 
 .music-icon-btn {
   width: 30px; height: 30px;
@@ -301,83 +280,6 @@ img { max-width: 100%; display: block; }
   flex-shrink: 0;
 }
 .music-icon-btn:hover { background: var(--card); color: var(--accent); }
-
-/* CSS 绘制音量喇叭符号（跨平台一致） */
-.vol-speaker {
-  position: relative;
-  display: inline-block;
-  width: 10px;
-  height: 14px;
-}
-/* 喇叭矩形主体 */
-.vol-speaker::before {
-  content: "";
-  position: absolute;
-  left: 0; top: 4px;
-  width: 3px; height: 6px;
-  background: currentColor;
-  border-radius: 1px;
-}
-/* 喇叭三角锥 */
-.vol-speaker::after {
-  content: "";
-  position: absolute;
-  left: 2px; top: 2px;
-  width: 0; height: 0;
-  border-left: 5px solid currentColor;
-  border-top: 5px solid transparent;
-  border-bottom: 5px solid transparent;
-}
-/* 声波 / 静音指示器 */
-.vol-wave {
-  position: relative;
-  display: inline-block;
-  width: 8px;
-  height: 14px;
-  margin-left: 1px;
-}
-/* 高音量：两道弧形声波 */
-.music-vol-btn:not(.muted):not(.low) .vol-wave::before,
-.music-vol-btn:not(.muted):not(.low) .vol-wave::after {
-  content: "";
-  position: absolute;
-  border: 1.5px solid currentColor;
-  border-left: none;
-  border-bottom: none;
-  border-radius: 0 50% 0 0;
-  left: 0;
-}
-.music-vol-btn:not(.muted):not(.low) .vol-wave::before {
-  width: 4px; height: 4px;
-  top: 5px;
-}
-.music-vol-btn:not(.muted):not(.low) .vol-wave::after {
-  width: 7px; height: 7px;
-  top: 3.5px;
-}
-/* 低音量：一道小弧 */
-.music-vol-btn.low .vol-wave::before {
-  content: "";
-  position: absolute;
-  border: 1.5px solid currentColor;
-  border-left: none;
-  border-bottom: none;
-  border-radius: 0 50% 0 0;
-  left: 0; top: 5px;
-  width: 4px; height: 4px;
-}
-/* 静音：叉号 */
-.music-vol-btn.muted .vol-wave::before,
-.music-vol-btn.muted .vol-wave::after {
-  content: "";
-  position: absolute;
-  width: 7px; height: 1.5px;
-  background: currentColor;
-  left: 0; top: 6px;
-  border-radius: 1px;
-}
-.music-vol-btn.muted .vol-wave::before { transform: rotate(45deg); }
-.music-vol-btn.muted .vol-wave::after  { transform: rotate(-45deg); }
 
 /* CSS 绘制播放列表三横线符号 */
 .icon-list {
@@ -1191,7 +1093,8 @@ input[type="range"]::-moz-range-thumb {
 
 @media (max-width: 768px) {
   .nav-inner { padding: 0 12px; gap: 8px; }
-  .nav-actions { gap: 4px; }
+  /* 手机端：主题/语言/菜单按钮靠右置顶 */
+  .nav-actions { gap: 4px; margin-left: auto; }
   .icon-btn { width: 34px; height: 34px; font-size: .95rem; }
   .brand-avatar { width: 32px; height: 32px; }
 
