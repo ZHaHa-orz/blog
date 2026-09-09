@@ -1,25 +1,63 @@
 # 庄哈哈的博客
 
-基于 [VuePress 2](https://v2.vuepress.vuejs.org/) 构建的个人博客，部署在 GitHub Pages。
+一个温暖的个人博客，采用纯静态 HTML / CSS / JS 构建，无构建依赖、无框架，开箱即用。
 
 ## 访问地址
 
-- 博客：https://zhaha-orz.github.io/blog/
-- 个人主页：https://zhaha-orz.github.io/
+- 博客：<https://zhaha-orz.github.io/blog/>
+- 个人主页：<https://zhaha-orz.github.io/>
+- GitHub：<https://github.com/ZHaHa-orz>
 
-## 本地开发
+## 项目结构
+
+```
+.
+├── index.html            # 博客首页（HTML 入口）
+├── css/
+│   └── style.css         # 全局样式（亮/暗双主题、响应式）
+├── js/
+│   ├── main.js           # 文章加载/渲染、碎碎念、路由、音乐播放器等核心逻辑
+│   ├── i18n.js           # 中英文国际化词条
+│   └── theme.js          # 亮 / 暗主题切换
+├── data/
+│   ├── articles.json     # 文章索引（标题、摘要、分类、时间）
+│   └── tweets.json       # 碎碎念数据（中英文）
+├── posts/                # Markdown 文章正文
+├── assets/               # 头像、音乐等静态资源
+└── package.json
+```
+
+## 特性
+
+- **纯静态**：无需 VuePress / 构建步骤，直接用任意静态服务器或直接打开 `index.html` 即可运行
+- **中英文双语**：导航、文章、碎碎念均支持中英文切换，记忆语言偏好
+- **亮 / 暗双主题**：自动跟随系统，亦可手动切换并记忆
+- **文章系统**：Markdown 正文（marked.js 渲染）+ highlight.js 代码高亮，支持分类筛选、面包屑导航
+- **碎碎念**：侧栏卡片，默认显示最近 3 条，点击「显示更多」展开全部
+- **音乐播放器**：底部悬浮播放器，支持播放/暂停、进度拖动、音量调节、自动续播
+- **响应式**：适配桌面与手机
+- **温暖配色**：杏色 / 焦糖色调，营造柔和氛围
+
+## 本地预览
+
+无需安装依赖，任选其一：
 
 ```bash
-# 安装依赖
-pnpm install
+# 方式一：Python 内置服务器
+python3 -m http.server 8080
 
-# 启动开发服务器
-pnpm docs:dev
-
-# 构建静态站点
-pnpm docs:build
+# 方式二：Node 静态服务器（如已装 serve / http-server）
+npx serve .
 ```
+
+然后浏览器打开 <http://localhost:8080>。
+
+> 注：`package.json` 中残留的 `docs:dev` / `docs:build` 脚本为旧 VuePress 配置，当前静态版本未使用，可忽略。
 
 ## 部署
 
-通过 GitHub Actions（`.github/workflows/deploy-docs.yml`）自动构建并部署到 `gh-pages` 分支。
+将整个仓库（或 `main` 分支根目录）部署到任意静态托管服务即可，例如 GitHub Pages、Cloudflare Pages、Vercel 等。无需构建步骤。
+
+## License
+
+个人作品，转载请注明来源。
