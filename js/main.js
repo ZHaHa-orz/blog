@@ -296,7 +296,7 @@
     const curEl = $("musicCurrent");
     const durEl = $("musicDuration");
     const volBtn = $("musicVolBtn");
-    const volDots = $("volDots");
+    const volSlider = $("musicVolume");
     const plBtn = $("musicPlaylistBtn");
     const plPanel = $("musicPlaylist");
     const plList = $("playlistList");
@@ -417,33 +417,36 @@
     });
     seek.addEventListener("change", () => { seeking = false; });
 
-    // 音量圆点：点击设置对应音量等级
-    volDots.querySelectorAll(".vol-dot").forEach((dot) => {
-      dot.addEventListener("click", (e) => {
-        e.stopPropagation();
-        const v = parseInt(dot.dataset.vol, 10) / 100;
-        audio.muted = false;
-        audio.volume = v;
-        lastVolume = v;
-        updateVolIcon();
-        updateVolDots();
-      });
+    // 音量滑块
+    volSlider.addEventListener("input", () => {
+      const v = parseInt(volSlider.value, 10) / 100;
+      audio.volume = v;
+      audio.muted = v === 0;
+      updateVolIcon();
+      updateVolFill();
     });
 
-    /** 更新音量圆点的激活状态 */
-    function updateVolDots() {
-      const vol = audio.muted ? 0 : audio.volume;
-      volDots.querySelectorAll(".vol-dot").forEach((dot) => {
-        const dotVol = parseInt(dot.dataset.vol, 10) / 100;
-        dot.classList.toggle("active", vol >= dotVol - 0.01);
-      });
+    /** 同步音量滑块轨道的已填充比例（CSS 变量 --vol） */
+    function updateVolFill() {
+      const pct = Math.round((audio.muted ? 0 : audio.volume) * 100);
+      volSlider.style.setProperty("--vol", pct + "%");
     }
 
-    // 音量区域（桌面端 hover 展开；移动端点击展开）
+    // 音量区域（桌面端 hover 展开 + 拖动时保持展开；移动端点击展开）
     const volWrap = $("musicVolumeWrap");
     const isTouch = window.matchMedia("(pointer: coarse)").matches || "ontouchstart" in window;
 
-    // 音量按钮：桌面端点击切换静音；移动端点击展开/收起圆点
+    // 桌面端：拖动音量滑块时保持展开，松开后由 hover 决定是否隐藏
+    if (volWrap && !isTouch) {
+      volSlider.addEventListener("pointerdown", () => volWrap.classList.add("vol-open"));
+      document.addEventListener("pointerup", () => {
+        volWrap.classList.remove("vol-open");
+        volSlider.blur();
+      });
+      volWrap.addEventListener("mouseleave", () => volSlider.blur());
+    }
+
+    // 音量按钮：桌面端点击切换静音；移动端点击展开/收起滑块
     volBtn.addEventListener("click", () => {
       if (isTouch && volWrap) {
         volWrap.classList.toggle("vol-open");
@@ -452,15 +455,17 @@
       if (audio.muted || audio.volume === 0) {
         audio.muted = false;
         audio.volume = lastVolume || 0.7;
+        volSlider.value = String(Math.round(audio.volume * 100));
       } else {
         lastVolume = audio.volume;
         audio.muted = true;
+        volSlider.value = "0";
       }
       updateVolIcon();
-      updateVolDots();
+      updateVolFill();
     });
 
-    // 移动端：点击外部收起圆点
+    // 移动端：点击外部收起滑块
     if (isTouch && volWrap) {
       document.addEventListener("click", (e) => {
         if (volWrap && !volWrap.contains(e.target)) {
@@ -492,7 +497,7 @@
     audio.volume = 0.7;
     loadSong(0);
     updateVolIcon();
-    updateVolDots();
+    updateVolFill();
     // 页面空闲后后台预加载音频，减少首次点击播放的等待
     if ("requestIdleCallback" in window) {
       requestIdleCallback(() => audio.load());
@@ -501,11 +506,10 @@
     }
   }
 
-  /* ---------- 滚动渐显（IntersectionObserver） ---------- */
+  /* ---------- 滚动渐显/渐隐（IntersectionObserver） ---------- */
   function initRevealObserver() {
     const els = document.querySelectorAll(".reveal");
     if (!("IntersectionObserver" in window)) {
-      // 不支持的浏览器直接全部显示
       els.forEach((el) => el.classList.add("visible"));
       return;
     }
@@ -514,7 +518,9 @@
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
             entry.target.classList.add("visible");
-            io.unobserve(entry.target);
+          } else {
+            // 滚出视口时移除 visible，实现渐隐 + 下次进入再渐显
+            entry.target.classList.remove("visible");
           }
         });
       },
