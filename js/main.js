@@ -400,8 +400,17 @@
       updateVolIcon();
     });
 
-    // 静音按钮
+    // 音量区域（移动端靠点击展开滑块，桌面端靠 hover）
+    const volWrap = $("musicVolumeWrap");
+    const isTouch = window.matchMedia("(pointer: coarse)").matches || "ontouchstart" in window;
+
+    // 静音按钮：桌面端点击切换静音；移动端点击展开/收起滑块
     volBtn.addEventListener("click", () => {
+      if (isTouch && volWrap) {
+        // 移动端：切换滑块显隐（静音通过把滑块拖到 0 实现）
+        volWrap.classList.toggle("vol-open");
+        return;
+      }
       if (audio.muted || audio.volume === 0) {
         audio.muted = false;
         audio.volume = lastVolume || 0.7;
@@ -413,6 +422,18 @@
       }
       updateVolIcon();
     });
+
+    // 移动端：点击滑块本身不收起；点击外部收起滑块
+    if (isTouch && volWrap) {
+      volWrap.addEventListener("click", (e) => {
+        if (e.target === volSlider) e.stopPropagation();
+      });
+      document.addEventListener("click", (e) => {
+        if (volWrap && !volWrap.contains(e.target)) {
+          volWrap.classList.remove("vol-open");
+        }
+      });
+    }
 
     function updateVolIcon() {
       if (audio.muted || audio.volume === 0) volBtn.textContent = "🔇";
