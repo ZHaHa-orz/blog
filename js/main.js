@@ -79,12 +79,12 @@
     return fmtDate(iso, lang);
   }
 
-  /** 秒 → m:ss */
+  /** 秒 → mm:ss */
   function fmtTime(sec) {
-    if (!isFinite(sec) || sec < 0) return "0:00";
+    if (!isFinite(sec) || sec < 0) return "00:00";
     const m = Math.floor(sec / 60);
     const s = Math.floor(sec % 60);
-    return `${m}:${s.toString().padStart(2, "0")}`;
+    return `${m.toString().padStart(2, "0")}:${s.toString().padStart(2, "0")}`;
   }
 
   /** 生成单篇文章卡片 HTML */
@@ -293,8 +293,7 @@
     const audio = $("bgAudio");
     const playBtn = $("musicPlayBtn");
     const seek = $("musicSeek");
-    const curEl = $("musicCurrent");
-    const durEl = $("musicDuration");
+    const timeEl = $("musicTime");
     const volBtn = $("musicVolBtn");
     const volSlider = $("musicVolume");
     const plBtn = $("musicPlaylistBtn");
@@ -323,8 +322,25 @@
     function updateTitleMarquee() {
       const meta = titleEl.parentElement;
       if (!meta) return;
-      const overflow = titleEl.scrollWidth > meta.clientWidth + 1;
-      titleEl.classList.toggle("marquee", overflow);
+      // 判断标题文字宽度是否超过可用空间
+      const textWidth = titleEl.scrollWidth;
+      const availWidth = meta.clientWidth - (artistEl.offsetWidth + 16);
+      const overflow = textWidth > availWidth + 1;
+      if (overflow) {
+        if (!titleEl.classList.contains("marquee")) {
+          // 首次启用：将文字包裹进 marquee-inner span
+          const text = titleEl.textContent;
+          titleEl.classList.add("marquee");
+          titleEl.innerHTML = '<span class="marquee-inner">' + esc(text) + "</span>";
+        }
+      } else {
+        if (titleEl.classList.contains("marquee")) {
+          // 恢复：取出 marquee-inner 内的文字
+          const inner = titleEl.querySelector(".marquee-inner");
+          titleEl.classList.remove("marquee");
+          titleEl.textContent = inner ? inner.textContent : titleEl.textContent;
+        }
+      }
     }
     window.addEventListener("resize", updateTitleMarquee);
 
@@ -386,18 +402,28 @@
 
     // 元数据加载 → 显示总时长
     audio.addEventListener("loadedmetadata", () => {
-      durEl.textContent = fmtTime(audio.duration);
+      timeEl.textContent = fmtTime(audio.currentTime) + "/" + fmtTime(audio.duration);
     });
 
     let seeking = false;
 
-    // 时间更新 → 进度条（拖动时不覆盖）
+    // 时间更新 → 进度条 + 时间显示（拖动时不覆盖）
     audio.addEventListener("timeupdate", () => {
       if (!seeking && audio.duration) {
         const pct = (audio.currentTime / audio.duration) * 1000;
         seek.value = String(pct);
       }
-      curEl.textContent = fmtTime(audio.currentTime);
+      timeEl.textContent = fmtTime(audio.currentTime) + "/" + fmtTime(audio.duration);
+    });
+
+    // 播放结束 → 暂停 3 秒后播放下一首
+    audio.addEventListener("ended", () => {
+      playBtn.classList.remove("playing");
+      setTimeout(() => {
+        const nextIdx = (currentSongIndex + 1) % playlist.length;
+        loadSong(nextIdx);
+        audio.play().then(() => playBtn.classList.add("playing")).catch(() => {});
+      }, 3000);
     });
 
     // 拖动进度条开始
@@ -405,7 +431,7 @@
     seek.addEventListener("input", () => {
       if (audio.duration) {
         audio.currentTime = (parseFloat(seek.value) / 1000) * audio.duration;
-        curEl.textContent = fmtTime(audio.currentTime);
+        timeEl.textContent = fmtTime(audio.currentTime) + "/" + fmtTime(audio.duration);
       }
     });
     // 拖动结束 → 跳到对应时间播放

@@ -135,6 +135,9 @@ img { max-width: 100%; display: block; }
 .music-play-btn:not(.playing):not(.loading) .icon-play { display: block; }
 .music-play-btn.playing:not(.loading) .icon-pause { display: block; }
 .music-play-btn.loading .icon-loading { display: block; }
+/* 加载图标绝对定位，避免撑大按钮 */
+.music-play-btn { position: relative; }
+.music-play-btn svg { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); }
 
 /* 中间：曲名 + 进度条 */
 .music-body {
@@ -150,19 +153,26 @@ img { max-width: 100%; display: block; }
   gap: 8px;
   min-width: 0;
   overflow: hidden;
+  justify-content: flex-start;
 }
 .music-title {
   font-size: .82rem;
   font-weight: 700;
   color: var(--title);
   white-space: nowrap;
-  flex-shrink: 0;
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
-/* 歌曲名过长时滚动显示 */
+/* 歌曲名过长时滚动显示：保持 overflow:hidden 裁剪，文字在标题宽度内滚动 */
 .music-title.marquee {
+  text-overflow: clip;
+}
+.music-title.marquee .marquee-inner {
   display: inline-block;
   animation: marquee 9s linear infinite;
-  padding-right: 40px;            /* 滚动末尾与开头的间距 */
+  padding-right: 40px;
 }
 @keyframes marquee {
   0%   { transform: translateX(0); }
@@ -174,6 +184,7 @@ img { max-width: 100%; display: block; }
   opacity: .7;
   white-space: nowrap;
   flex-shrink: 0;
+  margin-left: auto;
 }
 
 .music-progress {
@@ -187,8 +198,8 @@ img { max-width: 100%; display: block; }
   opacity: .7;
   font-family: "JetBrains Mono", Consolas, monospace;
   flex-shrink: 0;
-  min-width: 28px;
-  text-align: center;
+  white-space: nowrap;
+  text-align: right;
 }
 
 /* 右侧：音量 + 播放列表 */
@@ -204,6 +215,7 @@ img { max-width: 100%; display: block; }
   align-items: center;
   gap: 4px;
   flex-shrink: 0;
+  height: 30px;
 }
 .music-volume {
   -webkit-appearance: none;
@@ -219,7 +231,7 @@ img { max-width: 100%; display: block; }
 }
 .music-volume-wrap:hover .music-volume,
 .music-volume-wrap.vol-open .music-volume {
-  width: 70px;
+  width: 90px;
   opacity: 1;
 }
 /* 水平音量滑块轨道（左侧为已选音量） */
@@ -266,6 +278,8 @@ img { max-width: 100%; display: block; }
 .music-vol-btn.low .vol-icon-1 { display: block; }
 .music-vol-btn.mid .vol-icon-2 { display: block; }
 .music-vol-btn.high .vol-icon-3 { display: block; }
+/* 音量按钮不裁剪 SVG 图标 */
+.music-vol-btn { overflow: visible; }
 
 .music-icon-btn {
   width: 30px; height: 30px;
@@ -1113,10 +1127,13 @@ input[type="range"]::-moz-range-thumb {
   /* 音量滑块水平展开宽度略小 */
   .music-volume-wrap:hover .music-volume,
   .music-volume-wrap.vol-open .music-volume { width: 60px; }
-  /* 移动端：播放列表全屏宽 */
+  /* 移动端：播放列表适应手机屏幕宽度，而非播放器宽度 */
   .music-playlist {
+    position: fixed;
     left: 12px;
     right: 12px;
+    top: auto;
+    bottom: 72px;
   }
 
   /* 移动端：文章分类页改为单列，标签栏在上方横向滚动 */

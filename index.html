@@ -11,14 +11,14 @@
   <!-- highlight.js for code blocks -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release/build/styles/atom-one-dark.min.css" />
   <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release/build/highlight.min.js"></script>
-  <link rel="stylesheet" href="css/style.css?v=7" />
+  <link rel="stylesheet" href="css/style.css?v=10" />
 </head>
 <body>
   <!-- ============ 顶部导航栏 ============ -->
   <header class="navbar" id="navbar">
     <div class="nav-inner">
       <!-- 左上角：头像 + 名称，点击跳转到个人主页 -->
-      <a class="brand" href="https://zhaha-orz.github.io/" target="_blank" rel="noopener noreferrer">
+      <a class="brand" href="https://github.com/ZHaHa-orz" target="_blank" rel="noopener noreferrer">
         <img class="brand-avatar" src="assets/avatar.jpg" alt="庄哈哈" />
         <span class="brand-name" data-i18n="brand">庄哈哈</span>
       </a>
@@ -42,9 +42,8 @@
             <span class="music-artist" id="musicArtist">手嶌葵</span>
           </div>
           <div class="music-progress">
-            <span class="music-time" id="musicCurrent">0:00</span>
             <input type="range" class="music-seek" id="musicSeek" min="0" max="1000" value="0" aria-label="播放进度" />
-            <span class="music-time" id="musicDuration">0:00</span>
+            <span class="music-time" id="musicTime">00:00/00:00</span>
           </div>
         </div>
 
@@ -70,7 +69,7 @@
                 <path d="M15.5 6.5c2.5 2 2.5 5 0 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" fill="none"/>
               </svg>
               <!-- 67-100% 高音量 -->
-              <svg class="vol-icon vol-icon-3" viewBox="0 0 20 20" width="16" height="16">
+              <svg class="vol-icon vol-icon-3" viewBox="0 0 24 20" width="18" height="15">
                 <path d="M3 7h3l4-3v12l-4-3H3z" fill="currentColor"/>
                 <path d="M13 8c1.2 1 1.2 3 0 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" fill="none"/>
                 <path d="M15.5 6.5c2.5 2 2.5 5 0 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" fill="none"/>
@@ -126,7 +125,7 @@
           <button class="btn btn-primary hero-btn" data-action="articles">
             <span data-i18n="hero.postsBtn">博客文章</span>
           </button>
-          <a class="btn btn-ghost hero-btn" href="https://zhaha-orz.github.io/" target="_blank" rel="noopener noreferrer">
+          <a class="btn btn-ghost hero-btn" href="https://github.com/ZHaHa-orz" target="_blank" rel="noopener noreferrer">
             <span data-i18n="hero.githubBtn">GitHub</span>
             <span aria-hidden="true">↗</span>
           </a>
@@ -306,8 +305,8 @@
   </footer>
 
   <!-- ============ 脚本（按依赖顺序加载） ============ -->
-  <script src="js/i18n.js?v=7"></script>
-  <script src="js/theme.js?v=7"></script>
-  <script src="js/main.js?v=7"></script>
+  <script src="js/i18n.js?v=8"></script>
+  <script src="js/theme.js?v=8"></script>
+  <script src="js/main.js?v=9"></script>
 </body>
 </html>

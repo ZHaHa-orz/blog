@@ -135,11 +135,11 @@ function applyLang(lang) {
     if (dict[key] != null) el.textContent = dict[key];
   });
 
-  // 语言按钮显示的是“另一种可切换到的语言”标签
+  // 语言按钮显示当前语言标签
   const langBtn = document.getElementById("langToggle");
   if (langBtn) {
     const label = langBtn.querySelector("[data-i18n]");
-    if (label) label.textContent = lang === "zh" ? "EN" : "中";
+    if (label) label.textContent = lang === "zh" ? "中" : "EN";
   }
 
   // 派发事件，让 main.js 等其他模块重新渲染动态内容
