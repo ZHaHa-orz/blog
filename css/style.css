@@ -138,6 +138,8 @@ img { max-width: 100%; display: block; }
 /* 加载图标绝对定位，避免撑大按钮 */
 .music-play-btn { position: relative; }
 .music-play-btn svg { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); }
+/* 覆盖全局 .loading 的 padding，保持播放按钮尺寸不变 */
+.music-play-btn.loading { padding: 0; }
 
 /* 中间：曲名 + 进度条 */
 .music-body {
