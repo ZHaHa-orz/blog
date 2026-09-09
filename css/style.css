@@ -608,6 +608,29 @@ input[type="range"]::-moz-range-thumb {
   opacity: .7;
 }
 
+/* 碎碎念「显示更多」按钮 */
+.tweet-more {
+  display: block;
+  width: 100%;
+  margin-top: 14px;
+  padding: 8px 14px;
+  font-size: .82rem;
+  font-weight: 600;
+  color: var(--accent);
+  background: var(--accent-soft);
+  border: 1px dashed var(--accent);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background .2s ease, color .2s ease, transform .12s ease;
+}
+.tweet-more:hover {
+  background: var(--accent);
+  color: #fff;
+  transform: translateY(-1px);
+}
+.tweet-more:active { transform: translateY(0); }
+.tweet-more[hidden] { display: none; }
+
 /* 联系卡片 */
 .contact-card { text-align: center; }
 .card-desc { font-size: .9rem; color: var(--text); margin-bottom: 16px; }

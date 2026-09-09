@@ -191,15 +191,20 @@
   }
 
   /* ---------- 渲染：碎碎念 ---------- */
+  // 碎碎念展开状态（展开后显示全部，收起只显示前3条）
+  let tweetsExpanded = false;
+
   function renderTweets(list) {
     const wrap = $("tweetList");
+    const moreBtn = $("tweetMore");
     if (!list.length) {
       wrap.innerHTML = `<li class="empty">${esc(t("status.empty"))}</li>`;
+      if (moreBtn) moreBtn.hidden = true;
       return;
     }
     const lang = getLang();
-    const latest = list.slice(0, 3);
-    wrap.innerHTML = latest
+    const shown = tweetsExpanded ? list : list.slice(0, 3);
+    wrap.innerHTML = shown
       .map(
         (tw) => `
         <li class="tweet-item">
@@ -208,6 +213,17 @@
         </li>`
       )
       .join("");
+
+    // 超过3条才显示切换按钮
+    if (moreBtn) {
+      if (list.length > 3) {
+        moreBtn.hidden = false;
+        moreBtn.textContent = tweetsExpanded ? t("sidebar.showLess") : t("sidebar.showMore");
+        moreBtn.setAttribute("aria-expanded", String(tweetsExpanded));
+      } else {
+        moreBtn.hidden = true;
+      }
+    }
   }
 
   /* ---------- 加载：文章详情（懒加载） ---------- */
@@ -644,6 +660,15 @@
       showView("contact");
       window.scrollTo({ top: 0, behavior: "smooth" });
     });
+
+    // 碎碎念「显示更多」按钮 → 切换展开/收起
+    const tweetMore = $("tweetMore");
+    if (tweetMore) {
+      tweetMore.addEventListener("click", () => {
+        tweetsExpanded = !tweetsExpanded;
+        renderTweets(tweets);
+      });
+    }
 
     // 返回列表
     // 面包屑「文章」节点 → 返回上一层级（首页 / 分类页）

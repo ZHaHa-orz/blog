@@ -32,6 +32,8 @@ const I18N = {
     "breadcrumb.articles":  "文章",
 
     "sidebar.tweets":     "最近碎碎念",
+    "sidebar.showMore":   "显示更多 ↓",
+    "sidebar.showLess":   "收起 ↑",
     "sidebar.contact":    "联系我",
     "sidebar.contactDesc":"想聊点什么？随时找我。",
     "sidebar.contactBtn": "查看联系方式",
@@ -88,6 +90,8 @@ const I18N = {
     "breadcrumb.articles":  "Articles",
 
     "sidebar.tweets":     "Recent Tweets",
+    "sidebar.showMore":   "Show more ↓",
+    "sidebar.showLess":   "Collapse ↑",
     "sidebar.contact":    "Contact Me",
     "sidebar.contactDesc":"Want to chat? Find me anytime.",
     "sidebar.contactBtn": "View Contact",
