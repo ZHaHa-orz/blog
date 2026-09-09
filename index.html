@@ -42,10 +42,13 @@
           </div>
         </div>
 
+        <!-- 右侧：播放列表 + 音量（音量靠最右，滑块悬停展开） -->
         <div class="music-extra">
-          <button class="music-icon-btn" id="musicVolBtn" aria-label="静音" title="静音">🔊</button>
-          <input type="range" class="music-volume" id="musicVolume" min="0" max="100" value="70" aria-label="音量" />
           <button class="music-icon-btn" id="musicPlaylistBtn" aria-label="播放列表" title="播放列表">☰</button>
+          <div class="music-volume-wrap">
+            <input type="range" class="music-volume" id="musicVolume" min="0" max="100" value="70" aria-label="音量" />
+            <button class="music-icon-btn" id="musicVolBtn" aria-label="静音" title="音量">🔊</button>
+          </div>
         </div>
 
         <!-- 播放列表（下拉面板） -->

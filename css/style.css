@@ -180,12 +180,31 @@ img { max-width: 100%; display: block; }
   text-align: center;
 }
 
-/* 右侧：音量 + 列表 */
+/* 右侧：播放列表 + 音量 */
 .music-extra {
   display: flex;
   align-items: center;
   gap: 6px;
   flex-shrink: 0;
+}
+/* 音量区域：滑块默认收起，悬停 / 聚焦时展开 */
+.music-volume-wrap {
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+}
+.music-volume {
+  width: 0;
+  opacity: 0;
+  height: 4px;
+  transition: width .25s ease, opacity .25s ease, margin .25s ease;
+  margin: 0;
+}
+.music-volume-wrap:hover .music-volume,
+.music-volume-wrap:focus-within .music-volume {
+  width: 60px;
+  opacity: 1;
+  margin-right: 6px;
 }
 .music-icon-btn {
   width: 30px; height: 30px;
@@ -196,6 +215,7 @@ img { max-width: 100%; display: block; }
   color: var(--text);
   font-size: .9rem;
   transition: background .2s;
+  flex-shrink: 0;
 }
 .music-icon-btn:hover { background: var(--card); color: var(--accent); }
 
@@ -208,7 +228,7 @@ input[type="range"].music-volume {
   cursor: pointer;
 }
 .music-seek { flex: 1; height: 4px; }
-.music-volume { width: 60px; height: 4px; }
+/* .music-volume 宽度交给 .music-volume-wrap 控制（默认 0，悬停展开） */
 
 input[type="range"]::-webkit-slider-runnable-track {
   height: 4px;
@@ -993,14 +1013,21 @@ input[type="range"]::-moz-range-thumb {
 @media (max-width: 768px) {
   .nav-inner { padding: 0 12px; gap: 8px; }
 
-  /* 移动端：音乐播放器只保留播放按钮 + 曲名 */
+  /* 移动端：音乐播放器 — 播放按钮 + 曲名 + 细进度条，去掉多余按钮 */
   .music-player {
-    flex: 0 0 38px;
-    max-width: 38px;
-    padding: 4px;
+    flex: 1 1 auto;
+    max-width: none;
+    padding: 4px 12px 4px 4px;
     margin: 0;
+    min-width: 0;
+    gap: 8px;
   }
-  .music-body { display: none; }
+  .music-body { display: flex; gap: 1px; min-width: 0; }
+  .music-meta { gap: 6px; }
+  .music-title { font-size: .75rem; }
+  .music-artist { display: none; }
+  .music-progress { gap: 4px; }
+  .music-time { font-size: .6rem; min-width: 22px; }
   .music-extra { display: none; }
 
   /* 移动端：文章分类页改为单列，标签栏在上方横向滚动 */
