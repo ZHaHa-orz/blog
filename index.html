@@ -11,7 +11,7 @@
   <!-- highlight.js for code blocks -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release/build/styles/atom-one-dark.min.css" />
   <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release/build/highlight.min.js"></script>
-  <link rel="stylesheet" href="css/style.css?v=4" />
+  <link rel="stylesheet" href="css/style.css?v=5" />
 </head>
 <body>
   <!-- ============ 顶部导航栏 ============ -->
@@ -26,8 +26,8 @@
       <!-- 中间：音乐播放器（播放/暂停 + 进度 + 音量 + 播放列表） -->
       <div class="music-player" id="musicPlayer">
         <button class="music-play-btn" id="musicPlayBtn" aria-label="播放/暂停">
-          <span class="play-icon">▶</span>
-          <span class="pause-icon">⏸</span>
+          <span class="icon-play"></span>
+          <span class="icon-pause"></span>
         </button>
 
         <div class="music-body">
@@ -42,13 +42,18 @@
           </div>
         </div>
 
-        <!-- 右侧：播放列表 + 音量（音量靠最右，滑块悬停/点击展开，按钮位置固定） -->
+        <!-- 右侧：音量（滑块向左展开，压缩进度条） + 播放列表（最右） -->
         <div class="music-extra">
-          <button class="music-icon-btn" id="musicPlaylistBtn" aria-label="播放列表" title="播放列表">☰</button>
           <div class="music-volume-wrap" id="musicVolumeWrap">
-            <button class="music-icon-btn" id="musicVolBtn" aria-label="静音" title="音量">🔊</button>
             <input type="range" class="music-volume" id="musicVolume" min="0" max="100" value="70" aria-label="音量" />
+            <button class="music-icon-btn music-vol-btn" id="musicVolBtn" aria-label="静音" title="音量">
+              <span class="vol-speaker"></span>
+              <span class="vol-wave"></span>
+            </button>
           </div>
+          <button class="music-icon-btn" id="musicPlaylistBtn" aria-label="播放列表" title="播放列表">
+            <span class="icon-list"></span>
+          </button>
         </div>
 
         <!-- 播放列表（下拉面板） -->
@@ -274,8 +279,8 @@
   </footer>
 
   <!-- ============ 脚本（按依赖顺序加载） ============ -->
-  <script src="js/i18n.js?v=4"></script>
-  <script src="js/theme.js?v=4"></script>
-  <script src="js/main.js?v=4"></script>
+  <script src="js/i18n.js?v=5"></script>
+  <script src="js/theme.js?v=5"></script>
+  <script src="js/main.js?v=5"></script>
 </body>
 </html>

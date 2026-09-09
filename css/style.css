@@ -126,18 +126,36 @@ img { max-width: 100%; display: block; }
   justify-content: center;
   flex-shrink: 0;
   transition: transform .2s, background .2s;
-  font-size: .85rem;
 }
 .music-play-btn:hover { background: var(--hover); }
 .music-play-btn:active { transform: scale(.92); }
 
-.music-play-btn .pause-icon { display: none; }
-.music-play-btn.playing .play-icon { display: none; }
-.music-play-btn.playing .pause-icon { display: inline; }
+/* CSS 绘制的播放/暂停符号（跨平台一致） */
+.icon-play {
+  width: 0; height: 0;
+  border-left: 9px solid #fff;
+  border-top: 6px solid transparent;
+  border-bottom: 6px solid transparent;
+  margin-left: 3px;
+}
+.icon-pause {
+  display: none;
+  align-items: center;
+  gap: 3px;
+}
+.icon-pause::before,
+.icon-pause::after {
+  content: "";
+  width: 3px; height: 13px;
+  background: #fff;
+  border-radius: 1px;
+}
+.music-play-btn.playing .icon-play { display: none; }
+.music-play-btn.playing .icon-pause { display: inline-flex; }
 
 /* 播放按钮加载态：显示旋转的圆环 */
-.music-play-btn.loading .play-icon,
-.music-play-btn.loading .pause-icon { display: none; }
+.music-play-btn.loading .icon-play,
+.music-play-btn.loading .icon-pause { display: none; }
 .music-play-btn.loading::after {
   content: "";
   width: 16px; height: 16px;
@@ -203,61 +221,43 @@ img { max-width: 100%; display: block; }
   text-align: center;
 }
 
-/* 右侧：播放列表 + 音量 */
+/* 右侧：音量 + 播放列表 */
 .music-extra {
   display: flex;
   align-items: center;
   gap: 6px;
   flex-shrink: 0;
 }
-/* 音量区域：滑块以垂直方向从按钮下方弹出，不占水平空间 */
+/* 音量区域：滑块水平向左展开，展开时压缩进度条 */
 .music-volume-wrap {
-  position: relative;
   display: flex;
   align-items: center;
-}
-/* 不可见的悬停桥接：填补按钮与滑块之间的 8px 间隙，
-   鼠标从按钮移向滑块时不会丢失 hover 状态 */
-.music-volume-wrap::after {
-  content: "";
-  position: absolute;
-  top: 100%;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 30px;
-  height: 8px;
+  gap: 4px;
+  flex-shrink: 0;
 }
 .music-volume {
-  position: absolute;
-  top: calc(100% + 8px);
-  right: 50%;
-  transform: translateX(50%);
-  width: 24px;
-  height: 88px;
-  -webkit-appearance: slider-vertical;
-  appearance: slider-vertical;
-  writing-mode: vertical-lr;
-  direction: rtl;
+  -webkit-appearance: none;
+  appearance: none;
+  width: 0;
+  height: 4px;
   opacity: 0;
-  visibility: hidden;
-  pointer-events: none;
-  transition: opacity .2s ease, visibility .2s ease;
-  z-index: 10;
-  --vol: 70;
+  overflow: hidden;
+  background: transparent;
+  cursor: pointer;
+  transition: width .25s ease, opacity .25s ease;
+  --vol: 70%;
 }
 .music-volume-wrap:hover .music-volume,
 .music-volume-wrap.vol-open .music-volume {
+  width: 70px;
   opacity: 1;
-  visibility: visible;
-  pointer-events: auto;
 }
-/* 垂直音量滑块的轨道与滑块样式（暖色主题，下方为已选音量） */
+/* 水平音量滑块轨道（左侧为已选音量） */
 .music-volume::-webkit-slider-runnable-track {
-  width: 4px;
-  height: auto;
+  height: 4px;
   border-radius: 4px;
   background: linear-gradient(
-    to top,
+    to right,
     var(--accent) 0%,
     var(--accent) var(--vol, 70%),
     var(--card) var(--vol, 70%),
@@ -270,16 +270,16 @@ img { max-width: 100%; display: block; }
   width: 12px; height: 12px;
   border-radius: 50%;
   background: var(--accent);
-  margin-left: -4px;        /* 让滑块在 4px 轨道上居中 */
+  margin-top: -4px;
   box-shadow: 0 1px 4px rgba(0, 0, 0, .2);
 }
 .music-volume::-moz-range-track {
-  width: 4px;
+  height: 4px;
   border-radius: 4px;
   background: var(--card);
 }
 .music-volume::-moz-range-progress {
-  width: 4px;
+  height: 4px;
   border-radius: 4px;
   background: var(--accent);
 }
@@ -289,6 +289,7 @@ img { max-width: 100%; display: block; }
   border-radius: 50%;
   background: var(--accent);
 }
+
 .music-icon-btn {
   width: 30px; height: 30px;
   border-radius: 50%;
@@ -296,13 +297,110 @@ img { max-width: 100%; display: block; }
   align-items: center;
   justify-content: center;
   color: var(--text);
-  font-size: .9rem;
   transition: background .2s;
   flex-shrink: 0;
 }
 .music-icon-btn:hover { background: var(--card); color: var(--accent); }
 
-/* 滑块通用（仅进度条；音量滑块为垂直方向，单独定义） */
+/* CSS 绘制音量喇叭符号（跨平台一致） */
+.vol-speaker {
+  position: relative;
+  display: inline-block;
+  width: 10px;
+  height: 14px;
+}
+/* 喇叭矩形主体 */
+.vol-speaker::before {
+  content: "";
+  position: absolute;
+  left: 0; top: 4px;
+  width: 3px; height: 6px;
+  background: currentColor;
+  border-radius: 1px;
+}
+/* 喇叭三角锥 */
+.vol-speaker::after {
+  content: "";
+  position: absolute;
+  left: 2px; top: 2px;
+  width: 0; height: 0;
+  border-left: 5px solid currentColor;
+  border-top: 5px solid transparent;
+  border-bottom: 5px solid transparent;
+}
+/* 声波 / 静音指示器 */
+.vol-wave {
+  position: relative;
+  display: inline-block;
+  width: 8px;
+  height: 14px;
+  margin-left: 1px;
+}
+/* 高音量：两道弧形声波 */
+.music-vol-btn:not(.muted):not(.low) .vol-wave::before,
+.music-vol-btn:not(.muted):not(.low) .vol-wave::after {
+  content: "";
+  position: absolute;
+  border: 1.5px solid currentColor;
+  border-left: none;
+  border-bottom: none;
+  border-radius: 0 50% 0 0;
+  left: 0;
+}
+.music-vol-btn:not(.muted):not(.low) .vol-wave::before {
+  width: 4px; height: 4px;
+  top: 5px;
+}
+.music-vol-btn:not(.muted):not(.low) .vol-wave::after {
+  width: 7px; height: 7px;
+  top: 3.5px;
+}
+/* 低音量：一道小弧 */
+.music-vol-btn.low .vol-wave::before {
+  content: "";
+  position: absolute;
+  border: 1.5px solid currentColor;
+  border-left: none;
+  border-bottom: none;
+  border-radius: 0 50% 0 0;
+  left: 0; top: 5px;
+  width: 4px; height: 4px;
+}
+/* 静音：叉号 */
+.music-vol-btn.muted .vol-wave::before,
+.music-vol-btn.muted .vol-wave::after {
+  content: "";
+  position: absolute;
+  width: 7px; height: 1.5px;
+  background: currentColor;
+  left: 0; top: 6px;
+  border-radius: 1px;
+}
+.music-vol-btn.muted .vol-wave::before { transform: rotate(45deg); }
+.music-vol-btn.muted .vol-wave::after  { transform: rotate(-45deg); }
+
+/* CSS 绘制播放列表三横线符号 */
+.icon-list {
+  position: relative;
+  display: inline-block;
+  width: 14px; height: 2px;
+  background: currentColor;
+  border-radius: 1px;
+  top: -5px;
+}
+.icon-list::before,
+.icon-list::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  width: 14px; height: 2px;
+  background: currentColor;
+  border-radius: 1px;
+}
+.icon-list::before { top: 5px; }
+.icon-list::after  { top: 10px; }
+
+/* 进度条滑块通用样式 */
 input[type="range"].music-seek {
   -webkit-appearance: none;
   appearance: none;
@@ -1097,9 +1195,9 @@ input[type="range"]::-moz-range-thumb {
   .icon-btn { width: 34px; height: 34px; font-size: .95rem; }
   .brand-avatar { width: 32px; height: 32px; }
 
-  /* 移动端：音乐播放器 — 播放按钮 + 曲名 + 细进度条，去掉多余按钮 */
+  /* 移动端：音乐播放器 — 只保留播放键 + 音量 + 列表，隐藏进度条 */
   .music-player {
-    flex: 1 1 auto;
+    flex: 0 0 auto;
     max-width: none;
     padding: 4px 10px 4px 4px;
     margin: 0;
@@ -1107,16 +1205,13 @@ input[type="range"]::-moz-range-thumb {
     gap: 6px;
   }
   .music-play-btn { width: 34px; height: 34px; }
-  .music-body { display: flex; gap: 1px; min-width: 0; }
-  .music-meta { gap: 6px; }
-  .music-title { font-size: .75rem; }
-  .music-artist { display: none; }
-  .music-progress { gap: 4px; }
-  .music-time { font-size: .6rem; min-width: 22px; }
+  /* 隐藏曲名、进度条，移动端不需要 */
+  .music-body { display: none; }
   .music-icon-btn { width: 32px; height: 32px; }
-  /* 移动端：保留播放列表 + 音量按钮，音量滑块垂直向下弹出 */
   .music-extra { display: flex; gap: 2px; }
-  .music-volume { height: 76px; }
+  /* 音量滑块水平展开宽度略小 */
+  .music-volume-wrap:hover .music-volume,
+  .music-volume-wrap.vol-open .music-volume { width: 60px; }
 
   /* 移动端：文章分类页改为单列，标签栏在上方横向滚动 */
   .articles-layout {

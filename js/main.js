@@ -471,9 +471,9 @@
     }
 
     function updateVolIcon() {
-      if (audio.muted || audio.volume === 0) volBtn.textContent = "🔇";
-      else if (audio.volume < 0.5) volBtn.textContent = "🔉";
-      else volBtn.textContent = "🔊";
+      volBtn.classList.remove("muted", "low");
+      if (audio.muted || audio.volume === 0) volBtn.classList.add("muted");
+      else if (audio.volume < 0.5) volBtn.classList.add("low");
     }
 
     // 播放列表开关
