@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark"><head>
+<html lang="en" data-theme="light"><head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="庄哈哈的个人博客 — 记录生活、技术与碎碎念">
@@ -10,8 +10,8 @@
   <!-- highlight.js for code blocks -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release/build/styles/atom-one-dark.min.css">
   <script defer="" src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release/build/highlight.min.js"></script>
-  <link rel="stylesheet" href="css/style.css?v=12">
-<link id="hljs-theme" rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release/build/styles/atom-one-dark.min.css"></head>
+  <link rel="stylesheet" href="css/style.css?v=13">
+<link id="hljs-theme" rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release/build/styles/atom-one-light.min.css"></head>
 <body>
   <!-- ============ 顶部导航栏 ============ -->
   <header class="navbar" id="navbar">
@@ -36,11 +36,11 @@
         </button>
 
         <div class="music-body">
-          <div class="music-meta">
+          <div class="music-meta" style="">
             <span class="music-title marquee" id="musicTitle">森の小さなレストラン</span>
-            <span class="music-artist" id="musicArtist">手嶌葵</span>
-          </div>
-          <div class="music-progress">
+            
+          <span class="music-artist" id="musicArtist" style="">手嶌葵</span></div>
+          <div class="music-progress" style="">
             
             <input type="range" class="music-seek" id="musicSeek" min="0" max="1000" value="0" aria-label="播放进度" style="">
           <span class="music-time" id="musicTime" style="">00:00/00:00</span></div>
@@ -48,7 +48,7 @@
 
         <!-- 右侧：音量（滑块向左展开） + 播放列表（最右） -->
         <div class="music-extra">
-          <div class="music-volume-wrap" id="musicVolumeWrap">
+          <div class="music-volume-wrap" id="musicVolumeWrap" style="">
             <input type="range" class="music-volume" id="musicVolume" min="0" max="100" value="70" aria-label="音量" style="--vol: 70%;">
             <button class="music-icon-btn music-vol-btn high" id="musicVolBtn" aria-label="音量" title="音量">
               <!-- 0% 静音 -->
@@ -76,7 +76,7 @@
               </svg>
             </button>
           </div>
-          <button class="music-icon-btn" id="musicPlaylistBtn" aria-label="播放列表" title="播放列表">
+          <button class="music-icon-btn" id="musicPlaylistBtn" aria-label="播放列表" title="播放列表" style="">
             <span class="icon-list"></span>
           </button>
         </div>
@@ -172,6 +172,7 @@
       <nav class="nav-menu" id="navMenu">
         <a href="#" class="nav-link" data-i18n="nav.home" data-action="home">nav.home</a>
         <a href="#" class="nav-link" data-i18n="nav.articles" data-action="articles">nav.articles</a>
+        <a href="pet/dist/index.html" class="nav-link nav-link-ext" data-i18n="nav.pet" target="_blank" rel="noopener noreferrer">nav.pet</a>
         <a href="#" class="nav-link" data-i18n="nav.about" data-action="about">nav.about</a>
         <a href="#" class="nav-link" data-i18n="nav.contact" data-action="contact">nav.contact</a>
       </nav>
@@ -484,10 +485,11 @@
   </footer>
 
   <!-- ============ 脚本（按依赖顺序加载） ============ -->
-  <script src="js/i18n.js?v=8"></script>
-  <script src="js/theme.js?v=8"></script>
-  <script src="js/main.js?v=9"></script>
+  <script src="js/i18n.js?v=9"></script>
+  <script src="js/theme.js?v=9"></script>
+  <script src="js/main.js?v=10"></script>
 
 
 <iframe class="html2canvas-container" width="1619" height="1190" scrolling="no" data-html2canvas-ignore="true" style="visibility: hidden; position: fixed; left: -10000px; top: 0px; border: 0px;"></iframe><iframe class="html2canvas-container" width="1619" height="1190" scrolling="no" data-html2canvas-ignore="true" style="visibility: hidden; position: fixed; left: -10000px; top: 0px; border: 0px;"></iframe>
-<iframe class="html2canvas-container" width="1619" height="1190" scrolling="no" data-html2canvas-ignore="true" style="visibility: hidden; position: fixed; left: -10000px; top: 0px; border: 0px;"></iframe><iframe class="html2canvas-container" width="1619" height="1190" scrolling="no" data-html2canvas-ignore="true" style="visibility: hidden; position: fixed; left: -10000px; top: 0px; border: 0px;"></iframe><iframe class="html2canvas-container" width="1619" height="1190" scrolling="no" data-html2canvas-ignore="true" style="visibility: hidden; position: fixed; left: -10000px; top: 0px; border: 0px;"></iframe><iframe class="html2canvas-container" width="1619" height="1190" scrolling="no" data-html2canvas-ignore="true" style="visibility: hidden; position: fixed; left: -10000px; top: 0px; border: 0px;"></iframe><iframe class="html2canvas-container" width="1619" height="1190" scrolling="no" data-html2canvas-ignore="true" style="visibility: hidden; position: fixed; left: -10000px; top: 0px; border: 0px;"></iframe><iframe class="html2canvas-container" width="1619" height="1190" scrolling="no" data-html2canvas-ignore="true" style="visibility: hidden; position: fixed; left: -10000px; top: 0px; border: 0px;"></iframe></body></html>
+<iframe class="html2canvas-container" width="1619" height="1190" scrolling="no" data-html2canvas-ignore="true" style="visibility: hidden; position: fixed; left: -10000px; top: 0px; border: 0px;"></iframe><iframe class="html2canvas-container" width="1619" height="1190" scrolling="no" data-html2canvas-ignore="true" style="visibility: hidden; position: fixed; left: -10000px; top: 0px; border: 0px;"></iframe><iframe class="html2canvas-container" width="1619" height="1190" scrolling="no" data-html2canvas-ignore="true" style="visibility: hidden; position: fixed; left: -10000px; top: 0px; border: 0px;"></iframe><iframe class="html2canvas-container" width="1619" height="1190" scrolling="no" data-html2canvas-ignore="true" style="visibility: hidden; position: fixed; left: -10000px; top: 0px; border: 0px;"></iframe><iframe class="html2canvas-container" width="1619" height="1190" scrolling="no" data-html2canvas-ignore="true" style="visibility: hidden; position: fixed; left: -10000px; top: 0px; border: 0px;"></iframe><iframe class="html2canvas-container" width="1619" height="1190" scrolling="no" data-html2canvas-ignore="true" style="visibility: hidden; position: fixed; left: -10000px; top: 0px; border: 0px;"></iframe>
+</body></html>

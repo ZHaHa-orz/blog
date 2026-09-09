@@ -8,6 +8,7 @@ const I18N = {
     "brand":            "庄哈哈",
     "nav.home":         "首页",
     "nav.articles":     "文章",
+    "nav.pet":          "桌宠",
     "nav.about":        "关于",
     "nav.contact":      "联系",
 
@@ -64,6 +65,7 @@ const I18N = {
     "brand":            "Zhaha",
     "nav.home":         "Home",
     "nav.articles":     "Articles",
+    "nav.pet":          "Pet",
     "nav.about":        "About",
     "nav.contact":      "Contact",
 

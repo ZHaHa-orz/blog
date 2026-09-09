@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="description" content="贝塔的洞穴小屋 — 一只奶茶色小鼠在玩偶屋里的日常" />
+  <title>贝塔的小屋 · Beta Burrow</title>
+  <script type="module" crossorigin src="./assets/index-CXVQifQR.js"></script>
+  <link rel="stylesheet" crossorigin href="./assets/index-CqWoxsPQ.css">
+</head>
+<body>
+  <!-- 3D 画布容器 -->
+  <div id="app">
+    <canvas id="scene"></canvas>
+
+    <!-- 顶部标题条 -->
+    <header class="hud-top">
+      <div class="hud-title">
+        <span class="hud-logo">🧀</span>
+        <div class="hud-title-text">
+          <h1>贝塔的小屋</h1>
+          <p>一只奶茶色小鼠的洞穴日常</p>
+        </div>
+      </div>
+      <a class="hud-back" href="../index.html" title="返回博客">← 返回博客</a>
+    </header>
+
+    <!-- 状态气泡 -->
+    <div class="hud-status" id="hudStatus">
+      <span class="hud-emoji" id="hudEmoji">🏡</span>
+      <span class="hud-text" id="hudText">贝塔正在洞穴里悠闲地待着…</span>
+    </div>
+
+    <!-- 操作提示 -->
+    <div class="hud-hint">
+      <span>🖱️ 拖动旋转</span>
+      <span>🔍 滚轮缩放</span>
+      <span>👆 点击家具</span>
+    </div>
+
+    <!-- 控制按钮 -->
+    <div class="hud-controls">
+      <button class="hud-btn" id="btnPause" title="暂停 / 继续">
+        <span class="ic-pause">⏸</span><span class="ic-play" hidden>▶</span>
+      </button>
+      <button class="hud-btn" id="btnReset" title="重置视角">🏠</button>
+      <button class="hud-btn" id="btnAuto" title="切换自动行为">🤖</button>
+    </div>
+
+    <!-- 家具快捷行动面板（点击触发对应行为） -->
+    <aside class="hud-actions" id="hudActions" aria-label="行动列表">
+      <p class="hud-actions-title">点击家具唤起贝塔 →</p>
+      <div class="hud-action-grid" id="hudActionGrid"></div>
+    </aside>
+  </div>
+
+</body>
+</html>

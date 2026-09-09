@@ -431,6 +431,19 @@ input[type="range"]::-moz-range-thumb {
 .nav-link:hover { color: var(--accent); }
 .nav-link:hover::after { width: 100%; }
 
+/* 桌宠外部链接：带小图标，略微突出 */
+.nav-link-ext {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.nav-link-ext::before {
+  content: "🧀";
+  font-size: .9em;
+  line-height: 1;
+}
+.nav-link-ext::after { display: none; }
+
 .nav-actions {
   display: flex;
   align-items: center;
