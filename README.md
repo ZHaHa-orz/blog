@@ -5,8 +5,8 @@
 ## 访问地址
 
 - 博客：<https://zhaha-orz.github.io/blog/>
+
 - 个人主页：<https://zhaha-orz.github.io/>
-- GitHub：<https://github.com/ZHaHa-orz>
 
 ## 项目结构
 
@@ -30,29 +30,20 @@
 ## 特性
 
 - **纯静态**：无需 VuePress / 构建步骤，直接用任意静态服务器或直接打开 `index.html` 即可运行
+
 - **中英文双语**：导航、文章、碎碎念均支持中英文切换，记忆语言偏好
+
 - **亮 / 暗双主题**：自动跟随系统，亦可手动切换并记忆
+
 - **文章系统**：Markdown 正文（marked.js 渲染）+ highlight.js 代码高亮，支持分类筛选、面包屑导航
+
 - **碎碎念**：侧栏卡片，默认显示最近 3 条，点击「显示更多」展开全部
+
 - **音乐播放器**：底部悬浮播放器，支持播放/暂停、进度拖动、音量调节、自动续播
+
 - **响应式**：适配桌面与手机
+
 - **温暖配色**：杏色 / 焦糖色调，营造柔和氛围
-
-## 本地预览
-
-无需安装依赖，任选其一：
-
-```bash
-# 方式一：Python 内置服务器
-python3 -m http.server 8080
-
-# 方式二：Node 静态服务器（如已装 serve / http-server）
-npx serve .
-```
-
-然后浏览器打开 <http://localhost:8080>。
-
-> 注：`package.json` 中残留的 `docs:dev` / `docs:build` 脚本为旧 VuePress 配置，当前静态版本未使用，可忽略。
 
 ## 部署
 
