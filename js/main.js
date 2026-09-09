@@ -357,18 +357,27 @@
     async function togglePlay() {
       try {
         if (audio.paused) {
+          // 若尚未缓冲，显示加载态
+          if (audio.readyState < 2) playBtn.classList.add("loading");
           await audio.play();
+          playBtn.classList.remove("loading");
           playBtn.classList.add("playing");
         } else {
           audio.pause();
           playBtn.classList.remove("playing");
         }
       } catch (err) {
+        playBtn.classList.remove("loading");
         console.error("[music] play failed:", err);
       }
     }
 
     playBtn.addEventListener("click", togglePlay);
+
+    // 缓冲不足时显示加载态，可播放时移除
+    audio.addEventListener("waiting", () => playBtn.classList.add("loading"));
+    audio.addEventListener("playing", () => playBtn.classList.remove("loading"));
+    audio.addEventListener("canplay", () => playBtn.classList.remove("loading"));
 
     // 元数据加载 → 显示总时长
     audio.addEventListener("loadedmetadata", () => {
@@ -409,7 +418,14 @@
       audio.volume = v;
       audio.muted = v === 0;
       updateVolIcon();
+      updateVolFill();
     });
+
+    /** 同步音量滑块轨道的已填充比例（CSS 变量 --vol） */
+    function updateVolFill() {
+      const pct = Math.round((audio.muted ? 0 : audio.volume) * 100);
+      volSlider.style.setProperty("--vol", pct + "%");
+    }
 
     // 音量区域（桌面端 hover 展开 + 拖动时保持展开；移动端点击展开）
     const volWrap = $("musicVolumeWrap");
@@ -442,6 +458,7 @@
         volSlider.value = "0";
       }
       updateVolIcon();
+      updateVolFill();
     });
 
     // 移动端：点击外部收起滑块
@@ -473,6 +490,13 @@
     audio.volume = 0.7;
     loadSong(0);
     updateVolIcon();
+    updateVolFill();
+    // 页面空闲后后台预加载音频，减少首次点击播放的等待
+    if ("requestIdleCallback" in window) {
+      requestIdleCallback(() => audio.load());
+    } else {
+      setTimeout(() => audio.load(), 800);
+    }
   }
 
   /* ---------- 滚动渐显（IntersectionObserver） ---------- */

@@ -135,6 +135,19 @@ img { max-width: 100%; display: block; }
 .music-play-btn.playing .play-icon { display: none; }
 .music-play-btn.playing .pause-icon { display: inline; }
 
+/* 播放按钮加载态：显示旋转的圆环 */
+.music-play-btn.loading .play-icon,
+.music-play-btn.loading .pause-icon { display: none; }
+.music-play-btn.loading::after {
+  content: "";
+  width: 16px; height: 16px;
+  border: 2px solid rgba(255, 255, 255, .35);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin .7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
 /* 中间：曲名 + 进度条 */
 .music-body {
   flex: 1;
@@ -203,6 +216,17 @@ img { max-width: 100%; display: block; }
   display: flex;
   align-items: center;
 }
+/* 不可见的悬停桥接：填补按钮与滑块之间的 8px 间隙，
+   鼠标从按钮移向滑块时不会丢失 hover 状态 */
+.music-volume-wrap::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 30px;
+  height: 8px;
+}
 .music-volume {
   position: absolute;
   top: calc(100% + 8px);
@@ -219,6 +243,7 @@ img { max-width: 100%; display: block; }
   pointer-events: none;
   transition: opacity .2s ease, visibility .2s ease;
   z-index: 10;
+  --vol: 70;
 }
 .music-volume-wrap:hover .music-volume,
 .music-volume-wrap.vol-open .music-volume {
@@ -226,12 +251,18 @@ img { max-width: 100%; display: block; }
   visibility: visible;
   pointer-events: auto;
 }
-/* 垂直音量滑块的轨道与滑块样式 */
+/* 垂直音量滑块的轨道与滑块样式（暖色主题，下方为已选音量） */
 .music-volume::-webkit-slider-runnable-track {
   width: 4px;
   height: auto;
-  background: var(--card);
   border-radius: 4px;
+  background: linear-gradient(
+    to top,
+    var(--accent) 0%,
+    var(--accent) var(--vol, 70%),
+    var(--card) var(--vol, 70%),
+    var(--card) 100%
+  );
 }
 .music-volume::-webkit-slider-thumb {
   -webkit-appearance: none;
@@ -240,11 +271,17 @@ img { max-width: 100%; display: block; }
   border-radius: 50%;
   background: var(--accent);
   margin-left: -4px;        /* 让滑块在 4px 轨道上居中 */
+  box-shadow: 0 1px 4px rgba(0, 0, 0, .2);
 }
 .music-volume::-moz-range-track {
   width: 4px;
-  background: var(--card);
   border-radius: 4px;
+  background: var(--card);
+}
+.music-volume::-moz-range-progress {
+  width: 4px;
+  border-radius: 4px;
+  background: var(--accent);
 }
 .music-volume::-moz-range-thumb {
   width: 12px; height: 12px;
