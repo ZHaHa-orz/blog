@@ -199,7 +199,7 @@ img { max-width: 100%; display: block; }
   font-family: "JetBrains Mono", Consolas, monospace;
   flex-shrink: 0;
   white-space: nowrap;
-  text-align: right;
+  text-align: left;
 }
 
 /* 右侧：音量 + 播放列表 */
@@ -1127,13 +1127,15 @@ input[type="range"]::-moz-range-thumb {
   /* 音量滑块水平展开宽度略小 */
   .music-volume-wrap:hover .music-volume,
   .music-volume-wrap.vol-open .music-volume { width: 60px; }
-  /* 移动端：播放列表适应手机屏幕宽度，而非播放器宽度 */
+  /* 移动端：播放列表适应手机屏幕宽度，而非播放器宽度
+     用 absolute 相对 navbar 定位（navbar 有 backdrop-filter 会使 fixed 失效） */
+  .music-player { position: static; }
   .music-playlist {
-    position: fixed;
+    position: absolute;
     left: 12px;
     right: 12px;
-    top: auto;
-    bottom: 72px;
+    top: 64px;
+    bottom: auto;
   }
 
   /* 移动端：文章分类页改为单列，标签栏在上方横向滚动 */
