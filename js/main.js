@@ -310,7 +310,18 @@
       titleEl.textContent = song.title;
       artistEl.textContent = song.artist;
       renderPlaylist();
+      // 下一帧检测标题是否溢出，决定是否启用滚动
+      requestAnimationFrame(updateTitleMarquee);
     }
+
+    /** 歌曲名过长时启用滚动动画 */
+    function updateTitleMarquee() {
+      const meta = titleEl.parentElement;
+      if (!meta) return;
+      const overflow = titleEl.scrollWidth > meta.clientWidth + 1;
+      titleEl.classList.toggle("marquee", overflow);
+    }
+    window.addEventListener("resize", updateTitleMarquee);
 
     /** 渲染播放列表 */
     function renderPlaylist() {
@@ -400,14 +411,24 @@
       updateVolIcon();
     });
 
-    // 音量区域（移动端靠点击展开滑块，桌面端靠 hover）
+    // 音量区域（桌面端 hover 展开 + 拖动时保持展开；移动端点击展开）
     const volWrap = $("musicVolumeWrap");
     const isTouch = window.matchMedia("(pointer: coarse)").matches || "ontouchstart" in window;
+
+    // 桌面端：拖动音量滑块时保持展开，松开后由 hover 决定是否隐藏
+    if (volWrap && !isTouch) {
+      volSlider.addEventListener("pointerdown", () => volWrap.classList.add("vol-open"));
+      document.addEventListener("pointerup", () => {
+        volWrap.classList.remove("vol-open");
+        volSlider.blur();
+      });
+      // 鼠标移出时失焦，避免残留焦点状态
+      volWrap.addEventListener("mouseleave", () => volSlider.blur());
+    }
 
     // 静音按钮：桌面端点击切换静音；移动端点击展开/收起滑块
     volBtn.addEventListener("click", () => {
       if (isTouch && volWrap) {
-        // 移动端：切换滑块显隐（静音通过把滑块拖到 0 实现）
         volWrap.classList.toggle("vol-open");
         return;
       }
@@ -423,11 +444,8 @@
       updateVolIcon();
     });
 
-    // 移动端：点击滑块本身不收起；点击外部收起滑块
+    // 移动端：点击外部收起滑块
     if (isTouch && volWrap) {
-      volWrap.addEventListener("click", (e) => {
-        if (e.target === volSlider) e.stopPropagation();
-      });
       document.addEventListener("click", (e) => {
         if (volWrap && !volWrap.contains(e.target)) {
           volWrap.classList.remove("vol-open");

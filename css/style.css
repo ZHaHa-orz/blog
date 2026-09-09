@@ -111,8 +111,8 @@ img { max-width: 100%; display: block; }
   padding: 6px 14px 6px 8px;
   background: var(--accent-soft);
   border-radius: 999px;
-  flex: 0 0 25%;          /* 仅占导航栏约 1/4 宽度 */
-  max-width: 300px;
+  flex: 0 0 32%;          /* 占导航栏约 1/3 宽度 */
+  max-width: 380px;
   min-width: 0;
 }
 
@@ -148,14 +148,24 @@ img { max-width: 100%; display: block; }
   align-items: baseline;
   gap: 8px;
   min-width: 0;
+  overflow: hidden;
 }
 .music-title {
   font-size: .82rem;
   font-weight: 700;
   color: var(--title);
   white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  flex-shrink: 0;
+}
+/* 歌曲名过长时滚动显示 */
+.music-title.marquee {
+  display: inline-block;
+  animation: marquee 9s linear infinite;
+  padding-right: 40px;            /* 滚动末尾与开头的间距 */
+}
+@keyframes marquee {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(calc(-100% - 40px)); }
 }
 .music-artist {
   font-size: .7rem;
@@ -187,26 +197,60 @@ img { max-width: 100%; display: block; }
   gap: 6px;
   flex-shrink: 0;
 }
-/* 音量区域：滑块默认收起，悬停 / 聚焦 / 展开时向左展开，按钮位置固定 */
+/* 音量区域：滑块以垂直方向从按钮下方弹出，不占水平空间 */
 .music-volume-wrap {
+  position: relative;
   display: flex;
-  flex-direction: row-reverse;   /* 按钮在右，滑块在左；滑块展开时按钮不动 */
   align-items: center;
-  overflow: hidden;
 }
 .music-volume {
-  width: 0;
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 50%;
+  transform: translateX(50%);
+  width: 24px;
+  height: 88px;
+  -webkit-appearance: slider-vertical;
+  appearance: slider-vertical;
+  writing-mode: vertical-lr;
+  direction: rtl;
   opacity: 0;
-  height: 4px;
-  transition: width .25s ease, opacity .25s ease, margin .25s ease;
-  margin: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity .2s ease, visibility .2s ease;
+  z-index: 10;
 }
 .music-volume-wrap:hover .music-volume,
-.music-volume-wrap:focus-within .music-volume,
 .music-volume-wrap.vol-open .music-volume {
-  width: 60px;
   opacity: 1;
-  margin-right: 6px;            /* row-reverse 下滑块在按钮左侧，margin-right 制造两者间距 */
+  visibility: visible;
+  pointer-events: auto;
+}
+/* 垂直音量滑块的轨道与滑块样式 */
+.music-volume::-webkit-slider-runnable-track {
+  width: 4px;
+  height: auto;
+  background: var(--card);
+  border-radius: 4px;
+}
+.music-volume::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 12px; height: 12px;
+  border-radius: 50%;
+  background: var(--accent);
+  margin-left: -4px;        /* 让滑块在 4px 轨道上居中 */
+}
+.music-volume::-moz-range-track {
+  width: 4px;
+  background: var(--card);
+  border-radius: 4px;
+}
+.music-volume::-moz-range-thumb {
+  width: 12px; height: 12px;
+  border: none;
+  border-radius: 50%;
+  background: var(--accent);
 }
 .music-icon-btn {
   width: 30px; height: 30px;
@@ -221,16 +265,14 @@ img { max-width: 100%; display: block; }
 }
 .music-icon-btn:hover { background: var(--card); color: var(--accent); }
 
-/* 滑块通用（进度条 + 音量） */
-input[type="range"].music-seek,
-input[type="range"].music-volume {
+/* 滑块通用（仅进度条；音量滑块为垂直方向，单独定义） */
+input[type="range"].music-seek {
   -webkit-appearance: none;
   appearance: none;
   background: transparent;
   cursor: pointer;
 }
 .music-seek { flex: 1; height: 4px; }
-/* .music-volume 宽度交给 .music-volume-wrap 控制（默认 0，悬停展开） */
 
 input[type="range"]::-webkit-slider-runnable-track {
   height: 4px;
@@ -1035,12 +1077,9 @@ input[type="range"]::-moz-range-thumb {
   .music-progress { gap: 4px; }
   .music-time { font-size: .6rem; min-width: 22px; }
   .music-icon-btn { width: 32px; height: 32px; }
-  /* 移动端：保留音量按钮（点击展开滑块），隐藏播放列表按钮以节省空间 */
+  /* 移动端：保留播放列表 + 音量按钮，音量滑块垂直向下弹出 */
   .music-extra { display: flex; gap: 2px; }
-  #musicPlaylistBtn { display: none; }
-  /* 移动端音量滑块展开宽度略窄，避免挤占标题 */
-  .music-volume-wrap.vol-open .music-volume,
-  .music-volume-wrap:hover .music-volume { width: 48px; }
+  .music-volume { height: 76px; }
 
   /* 移动端：文章分类页改为单列，标签栏在上方横向滚动 */
   .articles-layout {
@@ -1071,11 +1110,19 @@ input[type="range"]::-moz-range-thumb {
     border-bottom: 1px solid var(--divider);
     padding: 16px 24px;
     gap: 4px;
-    transform: translateY(-120%);
-    transition: transform .3s ease;
+    transform: translateY(-130%);
+    opacity: 0;
+    visibility: hidden;
+    transition: transform .3s ease, opacity .3s ease, visibility 0s linear .3s;
     box-shadow: var(--shadow);
+    z-index: 99;
   }
-  .nav-menu.open { transform: translateY(0); }
+  .nav-menu.open {
+    transform: translateY(0);
+    opacity: 1;
+    visibility: visible;
+    transition: transform .3s ease, opacity .3s ease, visibility 0s;
+  }
 
   .nav-link {
     padding: 12px 8px;
